@@ -1,0 +1,16 @@
+FROM rockylinux/rockylinux:9.2
+
+RUN dnf -y update && \
+    dnf -y install gcc make python3 python3-pip python3-devel && \
+    dnf clean all
+
+WORKDIR /app
+
+COPY requirements.txt .
+
+RUN pip3 install --no-cache-dir -r requirements.txt
+
+COPY . .
+
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+
