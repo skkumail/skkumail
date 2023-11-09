@@ -1,9 +1,5 @@
 #!/bin/bash
 
-export BACKEND_HOST=localhost
-export BACKEND_PORT=8000
-export FRONTEND_HOST=localhost
-export FRONTEND_PORT=3000
 
 function docker_actions() {
   case $1 in
@@ -30,6 +26,10 @@ function docker_actions() {
 }
 
 function start_dev() {
+	export BACKEND_HOST=localhost
+	export BACKEND_PORT=8000
+	export FRONTEND_HOST=localhost
+	export FRONTEND_PORT=3000
   cd ./frontend && npm run dev &
   cd ./backend && python3 manage.py runserver &
 }
