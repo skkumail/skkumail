@@ -1,3 +1,5 @@
+import Button, { BUTTON_SIZE, BUTTON_TYPE } from '@/src/components/button/Button';
+import PortalContainer from '@/src/components/container/Container';
 import { useState, useEffect } from 'react';
 
 export default function Home() {
@@ -10,10 +12,11 @@ export default function Home() {
   }, []);
 
   return (
-    <div>
-      <h1>FastAPI with Next.js</h1>
-      <p>{message}</p>
-    </div>
+    <PortalContainer>
+      <Button type={BUTTON_TYPE.SOLID} size={BUTTON_SIZE.MD}>
+        로그인 하세요
+      </Button>
+    </PortalContainer>
   );
 }
 
