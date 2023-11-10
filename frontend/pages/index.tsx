@@ -1,5 +1,5 @@
-import Button, { BUTTON_SIZE, BUTTON_TYPE } from '@/src/components/button/Button';
-import PortalContainer from '@/src/components/container/Container';
+import Button, { BUTTON_SIZE, BUTTON_TYPE } from '@/components/button/Button';
+import PortalContainer from '@/components/container/Container';
 import { useState, useEffect } from 'react';
 
 export default function Home() {
@@ -14,7 +14,7 @@ export default function Home() {
   return (
     <PortalContainer>
       <Button type={BUTTON_TYPE.SOLID} size={BUTTON_SIZE.MD}>
-        로그인 하세요
+        <span className='font-bold'>update</span>
       </Button>
     </PortalContainer>
   );

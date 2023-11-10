@@ -1,5 +1,5 @@
-import Button, { BUTTON_SIZE, BUTTON_TYPE } from "@/src/components/button/Button"
-import PortalContainer from "@/src/components/container/Container"
+import Button, { BUTTON_SIZE, BUTTON_TYPE } from "@/components/button/Button"
+import PortalContainer from "@/components/container/Container"
 
 const LoginPage = () => {
     return (
