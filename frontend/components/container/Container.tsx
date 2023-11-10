@@ -11,7 +11,7 @@ const PortalContainer = ({ topbar, layoutClassName, children }: IContainerProps)
         <>
             <div className="flex w-full">
                 {topbar && (
-                    <div className="z-100 items-nter fixed flex w-full flex-col border-gray-200 bg-white lg:ml-[96px] lg:flex lg:w-[calc(100%_-_96px)]">
+                    <div className="z-100 items-center fixed flex w-full flex-col border-gray-200 bg-white flex w-full">
                         {topbar}
                     </div>
                 )}
