@@ -18,7 +18,7 @@ export default function Home() {
 
   const handleButtonClick = () => {
     // Use router.push to navigate to the desired page
-    router.push('/email/email-detail');
+    router.push('/email');
   };
 
   return (
