@@ -5,6 +5,8 @@ import { COLORS } from '@/modules/var';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import LoginPage from './login';
+
 
 export default function Home() {
   const [message, setMessage] = useState('');
@@ -22,12 +24,8 @@ export default function Home() {
   };
 
   return (
-    <PortalContainer layoutClassName="mx-auto mb-[120px] mt-[60px] w-full" topbar={<Topbar />}>
-      <div className='mt-[20px]'>
-        <Button className='rounded-[7px] py-[12px] px-[28px] border-[2px] border-green-100' onClick={handleButtonClick}>
-          <span className='font-bold text-green-500'>GO DEMO</span>
-        </Button>
-      </div>
+    <PortalContainer layoutClassName="mx-auto mb-[120px] mt-[60px] w-full">
+      <LoginPage />
     </PortalContainer>
   );
 }

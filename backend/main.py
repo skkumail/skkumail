@@ -40,6 +40,8 @@ async def extract_keywords(request: Request):
             email_text, keyphrase_ngram_range=(1, 1), stop_words="english"
         )
 
+        print(keywords)
+
         # 추출된 키워드를 JSON 형식으로 반환
         response_data = {"keywords": keywords}
         return JSONResponse(content=response_data)
