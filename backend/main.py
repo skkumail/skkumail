@@ -1,15 +1,25 @@
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import FastAPI, HTTPException, Request, Depends
 from fastapi.responses import JSONResponse
 from keybert import KeyBERT
 from fastapi.middleware.cors import CORSMiddleware
-import os
+from pydantic import BaseModel,Field
+from uuid import UUID
+import models
+from database import engine,SessionLocal
+from sqlalchemy.orm import Session
+import smtplib
+from email.mime.text import MIMEText
+import openai
+from imap_tools import MailBox
 
 app = FastAPI()
+
+
 
 # env 필요
 origins = [
     "http://localhost:3000",
-    "http://127.0.0.1:3000",
+    "http://127.0.0.1:3000"   
 ]
 
 FRONTEND_HOST = os.environ.get('FRONTEND_HOST')
@@ -17,7 +27,6 @@ FRONTEND_PORT = os.environ.get('FRONTEND_PORT')
 if FRONTEND_HOST and FRONTEND_PORT:
     new_origin = f"http://{FRONTEND_HOST}:{FRONTEND_PORT}"
     origins.append(new_origin)
-
 
 app.add_middleware(
     CORSMiddleware,
@@ -27,9 +36,52 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# DB
+models.Base.metadata.create_all(bind=engine)
+
+def get_db():
+    try:
+        db=SessionLocal()
+        yield db
+    finally:
+        db.close()
+
+class User_info(BaseModel):  
+    username:str = Field(min_length=1)
+    pw:str = Field(min_length=1)
+    email_id:str = Field(min_length=1)
+    email_key:str = Field(min_length=1)
+    
+
+class User_send_log(BaseModel):  
+    username:str = Field(min_length=1)
+    receiver:str = Field(min_length=1)
+    prompt:str = Field(min_length=1)
+    result:str = Field(min_length=1)
+    num:int = Field(gt=0)
+
+
+class User_receive_log(BaseModel):  
+    username:str = Field(min_length=1)
+    sender:str = Field(min_length=1)
+    contents:str = Field(min_length=1)
+    summary:str = Field(min_length=1)
+    keyword:str = Field(min_length=1)
+    em_keyword:str = Field(min_length=1)
+    main_keyword:str = Field(min_length=1)
+    num:int = Field(gt=0)
+
+
+
+# @app.post("/")
+# async def default_setting(request: Request):
+#     print("here")
+#     return JSONResponse({'data':"hello"})
+
+
+
 # KeyBERT 모델 로딩
 keybert_model = KeyBERT("distilbert-base-nli-mean-tokens")
-
 
 @app.post("/extract_keywords")
 async def extract_keywords(request: Request):
@@ -56,3 +108,226 @@ async def extract_keywords(request: Request):
     except Exception as e:
         # 오류가 발생한 경우 500 Internal Server Error 반환
         raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
+
+
+
+################################ mail_generation #########################
+def mail_generator(text, prompt, answer, style, name, relation):
+    # api_key는 반드시 반드시 업로드하지 말 것!!!
+    f = open("/home/dori/Desktop/DORI/chatgpt_key.txt", 'r')
+    line = f.readline().strip()
+    f.close()
+    openai.api_key = line
+
+    # 로그 있는 경우 => 로그 기반 few shot learning
+    # 로그 없는 경우 => default setting으로 few shot learning
+    if prompt:
+        prompt = prompt
+        answer = answer
+        try:
+            completion = openai.ChatCompletion.create(
+                model="gpt-3.5-turbo",
+                messages=[
+                    {'role': 'user', 'content': prompt},
+                    {'role': 'assistant', 'content': answer},
+                    {'role': 'user', 'content': f'아래 내용을 모두 고려하여 비즈니스 메일을 작성해줘. 상대 이름은 {name}으로 나와는 {relation}이라는 관계야. 메일을 작성할 때는 가독성이 있어야 하며, {style}한 분위기로 작성해야 해. 앞에서 말한 고려사항들을 생각하면서 동시에 반드시 아래 내용을 모두 포함하여 메일을 작성해줘.\n{text}'}
+                ]
+            )
+        
+            return completion.choices[0].message['content'].strip()
+        except Exception as e:
+            print(e)
+            return "error"
+
+    else:
+        # assets_path = Path(__file__).resolve().parent / 'assets'
+        # prompt_path = assets_path / 'roleplay_prompt.txt'
+        # answer_path = assets_path / 'roleplay_answer.txt'
+        # with prompt_path.open('r',encoding='UTF8') as f:
+        #     prompt = f.read().strip()
+        # with answer_path.open('r',encoding='UTF8') as f:
+        #     answer = f.read().strip()
+        try:
+            completion = openai.ChatCompletion.create(
+                model="gpt-3.5-turbo",
+                messages=[
+                    {'role': 'user', 'content': f'아래 내용을 모두 고려하여 비즈니스 메일을 작성해줘. 상대 이름은 {name}으로 나와는 {relation}이라는 관계야. 메일을 작성할 때는 가독성이 있어야 하며, {style}한 분위기로 작성해야 해. 앞에서 말한 고려사항들을 생각하면서 동시에 반드시 아래 내용을 모두 포함하여 메일을 작성해줘.\n{text}'}
+                ]
+            )
+            return completion.choices[0].message['content'].strip()
+        except Exception as e:
+            return "error"
+
+    
+# 메일 작성 부분 - with ChatGPT
+@app.post("/chatgpt")
+async def chatgpt_mail_generate(request: Request, db: Session=Depends(get_db)):
+    try:
+        data = await request.json()
+        contents = data.get('contents')
+        # 동일한 상대에게 보냈던 메일로 few shot learning -> 그냥 동일한 카테고리(이건 어찌 분류?) 정도로 해도 괜찮을 듯...
+        username = data.get('username')
+        sendaddr = data.get('send_address')
+        style = data.get('style')
+        name = data.get('name')
+        relation = data.get('relation')
+
+        pre_contents = db.query(models.User_send_log).filter(models.User_send_log.username==username, models.User_send_log.receiver==sendaddr).all()
+
+        if len(pre_contents)==0:
+            chatgpt_infer= mail_generator(contents, None, None, style, name, relation)
+
+        else:
+            pre_prompt = chatgpt_infer[-1].prompt
+            pre_contents = chatgpt_infer[-1].result
+            
+            chatgpt_infer= mail_generator(contents, pre_prompt, pre_contents, style, name, relation)    
+        
+            
+        if chatgpt_infer == "error":
+            print("error")
+            raise HTTPException(status=400, detail=f"ChatGPT error")
+
+        return JSONResponse({'message': '연결 성공', 'data':chatgpt_infer})
+    
+    except Exception as e:
+        raise HTTPException(status=400, detail=f"An error occurred: {str(e)}")
+
+
+############################## send email #######################
+@app.post("/sendmail")
+async def send_email(request: Request, db: Session=Depends(get_db)):
+    try:
+        data = await request.json()
+        username = data.get('username')
+        head = data.get('head')
+        text = data.get('text')
+        address = data.get('address')
+        prompt = data.get('prompt')
+
+        temp_user=db.query(models.User_info).filter(models.User_info.username==username).first()    
+        email_id = temp_user.email_id
+        password = temp_user.email_key
+        
+        smtp = smtplib.SMTP('smtp.gmail.com', 587)
+        smtp.ehlo()
+        smtp.starttls()
+        smtp.login(email_id, password)
+
+        msg = MIMEText(text) # 본문
+        msg['Subject'] = head # 제목
+        smtp.sendmail(email_id, address, msg.as_string())
+        smtp.quit()
+
+        temp_user = db.query(models.User_send_log).filter(models.User_send_log.username==username, models.User_send_log.receiver==address).all()
+        temp_num = len(temp_user)
+        temp_user = models.User_send_log()
+        temp_user.username = username
+        temp_user.receiver = address
+        temp_user.prompt = prompt
+        temp_user.result = text
+        temp_user.num = temp_num+1
+
+        db.add(temp_user)
+        db.commit()
+            
+        return JSONResponse({'message': '전송 성공'})
+    
+    except Exception as e:
+        return HTTPException(status=400, detail=f"An error occurred: {str(e)}")
+
+
+
+########################### register ###############################3
+@app.post("/register")
+async def register(request: Request, db: Session=Depends(get_db)):
+    data = await request.json()
+    username = data.get('username')
+    password = data.get('password')
+    password_config = data.get('password_config')
+    gmail_id = data.get('gmail_id')
+    gmail_key = data.get('gmail_key')
+
+    temp_user_info = db.query(models.User_info).filter(models.User_info.username == username).all()
+    if len(temp_user_info) != 0:
+        return JSONResponse({'message': 'duplicated id'})
+
+    if password != password_config:
+        return JSONResponse({'message': '비밀번호 불일치'})
+
+    try:
+        smtp = smtplib.SMTP('smtp.gmail.com', 587)
+        smtp.ehlo()
+        smtp.starttls()
+        smtp.login(gmail_id, gmail_key)
+        smtp.quit()
+    except:
+        return JSONResponse({'message': '이메일 인증 실패'})
+
+    
+    try:
+        temp_user = models.User_info()
+        temp_user.username = username
+        temp_user.pw = password
+        temp_user.email_id = gmail_id
+        temp_user.email_key = gmail_key    
+        db.add(temp_user)
+        db.commit()
+        return JSONResponse({'message': '회원가입 성공'})
+
+    except:
+        return JSONResponse({'message': '회원가입 실패'})
+
+
+################################ Login #############################
+@app.post("/login")
+async def login(request: Request, db: Session=Depends(get_db)):
+    data = await request.json()
+    username = data.get('username')
+    password = data.get('password')
+    temp_user_info = db.query(models.User_info).filter(models.User_info.username == username, models.User_info.pw == password).first()
+    if temp_user_info is not None:
+        return JSONResponse({'message': '로그인이 완료되었습니다.', 'data':username})
+    else:
+        return HTTPException(status=400, detail='로그인에 실패하였습니다.')
+
+
+################################# Summary ############################
+def mail_summary(text):
+    # api_key는 반드시 반드시 업로드하지 말 것!!!
+    f = open("/home/dori/Desktop/DORI/chatgpt_key.txt", 'r')
+    line = f.readline().strip()
+    f.close()
+    openai.api_key = line
+
+    # 로그 있는 경우 => 로그 기반 few shot learning
+    # 로그 없는 경우 => default setting으로 few shot learning
+
+    try:
+        completion = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {'role': 'user', 'content': f'Summarize the email below with a key focus and summarize it easily at a glance. At this time, make sure you don\'t miss the necessary date and core, and write the sentences in a modified format so that they aren\'t long and summarize them.\n{text}'}
+            ]
+        )
+        return completion.choices[0].message['content'].strip()
+    except Exception as e:
+        return "error"
+
+
+@app.post("/summarize")
+async def chatgpt_mail_summarize(request: Request, db: Session=Depends(get_db)):
+    try:
+        data = await request.json()
+        contents = data.get('contents')
+        
+        chatgpt_infer= mail_summary(contents)
+
+            
+        if chatgpt_infer == "error":
+            raise HTTPException(status=400, detail="ChatGPT error")
+
+        return JSONResponse({'message': '연결 성공', 'data':chatgpt_infer})
+    
+    except Exception as e:
+        raise HTTPException(status=400, detail=f"An error occurred: {str(e)}")
