@@ -7,6 +7,10 @@ import { useRouter } from "next/router"
 import axios from "axios"
 import { useEffect, useState } from "react"
 import Popup from "@/components/popup/Popup"
+// 추가된 부분 2023-11-14, 로컬에서 개발하기 전에 
+// export BACKEND_HOST=127.0.0.1, 
+// export BACKEND_PORT=8000 하고 쓰세요
+import { baseURL } from "@/pages/api/axiosConfig"
 
 interface KeywordItemProps {
     keyword: string
@@ -40,7 +44,8 @@ const EmailDetail = () => {
 
     // 키워드 추출 관련
     const [keywords, setKeywords] = useState([])
-    const serverUrl = "http://127.0.0.1:8000" // env 빼기
+    //const serverUrl = "http://127.0.0.1:8000" // env 빼기
+    const serverUrl = baseURL;
 
     const handleKeywordExtractBtn = async (content: string) => {
         const payload = {
