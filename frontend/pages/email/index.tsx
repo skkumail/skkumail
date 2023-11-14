@@ -2,7 +2,7 @@ import Topbar from "@/components/bar/Topbar"
 import PortalContainer from "@/components/container/Container"
 import SearchInput from "@/components/input/SearchInput"
 import { useState } from "react"
-import { mockEmails, EmailProps } from "./mockData"
+import { mockEmails, EmailProps } from "../../data/mockData"
 import { useRouter } from "next/router"
 
 interface MailItemProps {
