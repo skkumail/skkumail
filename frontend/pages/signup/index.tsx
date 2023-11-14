@@ -1,3 +1,4 @@
+import PortalContainer from "@/components/container/Container";
 import { FunctionComponent } from "react";
 import styled from "styled-components";
 
@@ -185,70 +186,57 @@ const SignupPageRoot = styled.div`
 
 const SignupPage: FunctionComponent = () => {
   return (
-    <SignupPageRoot>
-      <RectangleParent>
-        <GroupChild />
-        <Div>로그인</Div>
-      </RectangleParent>
-      <Formcontainer>
-        <Innercontainer>
-          <Div1>계정을 만들어보세요.</Div1>
-          <Inputcontainer>
-            <Innerformcontainer>
-              <Input>
-                <InputContent>
-                  <Label>아이디</Label>
-                  <Placehoder>아이디를 입력하세요.</Placehoder>
-                </InputContent>
-              </Input>
-              <Input>
-                <InputContent>
-                  <Label>Email</Label>
-                  <Placehoder>이메일 주소를 입력하세요.</Placehoder>
-                </InputContent>
-              </Input>
-              <Input>
-                <InputContent>
-                  <Label>비밀번호</Label>
-                  <Placehoder>비밀번호를 입력하세요.</Placehoder>
-                </InputContent>
-              </Input>
-              <Input>
-                <InputContent>
-                  <Label>비밀번호 확인</Label>
-                  <Placehoder>비밀번호를 재입력하세요.</Placehoder>
-                </InputContent>
-              </Input>
-              <Component6>
-                <Label4>인증 번호 전송</Label4>
-              </Component6>
-              <Input>
-                <InputContent>
-                  <Label>인증 번호 입력</Label>
-                  <Placehoder>인증번호를 입력하세요.</Placehoder>
-                </InputContent>
-              </Input>
-            </Innerformcontainer>
-            <Controlscheckboxonnonorig>
-              <Controlscheckboxonnononon>
-                <Control>
-                  <ControlChild />
-                  <FicheckIcon alt="" src="/ficheck.svg" />
-                </Control>
-              </Controlscheckboxonnononon>
-              <Div1>
-                <IHerebyAccept>{`I hereby accept the `}</IHerebyAccept>
-                <Tc>{`T&C`}</Tc>
-                <IHerebyAccept> of Liquid</IHerebyAccept>
-              </Div1>
-            </Controlscheckboxonnonorig>
-          </Inputcontainer>
-          <Component6>
-            <Label4>게정 생성</Label4>
-          </Component6>
-        </Innercontainer>
-      </Formcontainer>
-    </SignupPageRoot>
+    <PortalContainer>
+        <RectangleParent>
+          <GroupChild />
+          <Div>로그인</Div>
+        </RectangleParent>
+        <Formcontainer>
+          <Innercontainer>
+            <Div1>계정을 만들어보세요.</Div1>
+            <Inputcontainer>
+              <Innerformcontainer>
+                <Input>
+                  <InputContent>
+                    <Label>아이디</Label>
+                    <Placehoder>아이디를 입력하세요.</Placehoder>
+                  </InputContent>
+                </Input>
+                <Input>
+                  <InputContent>
+                    <Label>Email</Label>
+                    <Placehoder>이메일 주소를 입력하세요.</Placehoder>
+                  </InputContent>
+                </Input>
+                <Input>
+                  <InputContent>
+                    <Label>비밀번호</Label>
+                    <Placehoder>비밀번호를 입력하세요.</Placehoder>
+                  </InputContent>
+                </Input>
+                <Input>
+                  <InputContent>
+                    <Label>비밀번호 확인</Label>
+                    <Placehoder>비밀번호를 재입력하세요.</Placehoder>
+                  </InputContent>
+                </Input>
+                <Component6>
+                  <Label4>인증 번호 전송</Label4>
+                </Component6>
+                <Input>
+                  <InputContent>
+                    <Label>인증 번호 입력</Label>
+                    <Placehoder>인증번호를 입력하세요.</Placehoder>
+                  </InputContent>
+                </Input>
+              </Innerformcontainer>
+            </Inputcontainer>
+            <Component6>
+              <Label4>게정 생성</Label4>
+            </Component6>
+          </Innercontainer>
+        </Formcontainer>
+    </PortalContainer>
   );
 };
 

@@ -11,6 +11,10 @@ const Topbar = () => {
         router.push('/write')
     }
 
+    const onMailReadClick = () => {
+        router.push('/email')
+    }
+
     return (
         <div className="border-b-[1px] ml-[0px] flex h-[60px] w-full bg-white border-green-100">
             <div className="flex items-center flex-start ml-[32px]">
@@ -20,10 +24,10 @@ const Topbar = () => {
                 <div className="cursor-pointer" onClick={onMailWriteClick}>
                     <span className="font-bold text-green-500">메일 쓰기</span>
                 </div>
-                <div>
+                <div className="cursor-pointer" onClick={onMailReadClick}>
                     <span className="font-bold text-green-500">메일 보기</span>
                 </div>
-                <div>
+                <div className="cursor-pointer">
                     <span className="font-bold text-green-500">키워드 보기</span>
                 </div>
             </div>

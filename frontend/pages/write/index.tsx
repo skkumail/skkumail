@@ -1,3 +1,5 @@
+import Topbar from "@/components/bar/Topbar";
+import PortalContainer from "@/components/container/Container";
 import styled from "styled-components";
 
 const NewIcon = styled.img`
@@ -296,84 +298,83 @@ const WriteHomeRoot = styled.div`
 
 const WriteHome = () => {
   return (
-    <WriteHomeRoot>
-      <NewIcon alt="" src="/page-layout.svg" />
-      <Div>메일을 전송해보세요.</Div>
-      <Formcontainer>
-        <Input>
-          <Top1>
-            <InputContent>
-              <Placehoder>수신인 이름을 입력하세요.</Placehoder>
-            </InputContent>
-          </Top1>
-        </Input>
-        <Input>
-          <Top1>
-            <InputContent>
-              <Placehoder>수신인 이메일을 입력하세요.</Placehoder>
-            </InputContent>
-          </Top1>
-        </Input>
-        <Select>
-          <BottomParent>
-            <Bottom>
-              <Label />
-            </Bottom>
-            <Top2>
-              <InputContent2>
-                <InputContent>
-                  <Placehoder>수신인과의 관계를 선택하세요.</Placehoder>
-                </InputContent>
-                <FichevronDownIcon alt="" src="/fichevrondown.svg" />
-              </InputContent2>
-            </Top2>
-          </BottomParent>
-        </Select>
-      </Formcontainer>
-      <Formcontainer1>
-        <Select1>
-          <BottomParent>
-            <Bottom>
-              <Label />
-            </Bottom>
-            <Top2>
-              <InputContent2>
-                <InputContent>
-                  <Placehoder>메일 작성 스타일을 선택하세요.</Placehoder>
-                </InputContent>
-                <FichevronDownIcon alt="" src="/fichevrondown.svg" />
-              </InputContent2>
-            </Top2>
-          </BottomParent>
-        </Select1>
-      </Formcontainer1>
-      <Component8>
-        <Label2>작성 요청</Label2>
-      </Component8>
-      <Formcontainer2>
-        <Innercontainer>
-          <Heading>
-            <Label>핵심 내용 작성</Label>
-          </Heading>
-          <Input2>
-            <ContentParent>
-              <Content>
-                <InputContent>
-                  <Placehoder>생성된 이메일 확인 및 수정</Placehoder>
-                  <Valid />
-                </InputContent>
-                <CheckIcon alt="" src="/check.svg" />
-              </Content>
-              <RectangleParent>
-                <GroupChild />
-                <GroupItem />
-                <GroupInner />
-              </RectangleParent>
-            </ContentParent>
-          </Input2>
-        </Innercontainer>
-      </Formcontainer2>
-    </WriteHomeRoot>
+    <PortalContainer topbar={<Topbar />}>
+        <Div>메일을 전송해보세요.</Div>
+        <Formcontainer>
+          <Input>
+            <Top1>
+              <InputContent>
+                <Placehoder>수신인 이름을 입력하세요.</Placehoder>
+              </InputContent>
+            </Top1>
+          </Input>
+          <Input>
+            <Top1>
+              <InputContent>
+                <Placehoder>수신인 이메일을 입력하세요.</Placehoder>
+              </InputContent>
+            </Top1>
+          </Input>
+          <Select>
+            <BottomParent>
+              <Bottom>
+                <Label />
+              </Bottom>
+              <Top2>
+                <InputContent2>
+                  <InputContent>
+                    <Placehoder>수신인과의 관계를 선택하세요.</Placehoder>
+                  </InputContent>
+                  <FichevronDownIcon alt="" src="/fichevrondown.svg" />
+                </InputContent2>
+              </Top2>
+            </BottomParent>
+          </Select>
+        </Formcontainer>
+        <Formcontainer1>
+          <Select1>
+            <BottomParent>
+              <Bottom>
+                <Label />
+              </Bottom>
+              <Top2>
+                <InputContent2>
+                  <InputContent>
+                    <Placehoder>메일 작성 스타일을 선택하세요.</Placehoder>
+                  </InputContent>
+                  <FichevronDownIcon alt="" src="/fichevrondown.svg" />
+                </InputContent2>
+              </Top2>
+            </BottomParent>
+          </Select1>
+        </Formcontainer1>
+        <Component8>
+          <Label2>작성 요청</Label2>
+        </Component8>
+        <Formcontainer2>
+          <Innercontainer>
+            <Heading>
+              <Label>핵심 내용 작성</Label>
+            </Heading>
+            <Input2>
+              <ContentParent>
+                <Content>
+                  <InputContent>
+                    <Placehoder>생성된 이메일 확인 및 수정</Placehoder>
+                    <Valid />
+                  </InputContent>
+                  <CheckIcon alt="" src="/check.svg" />
+                </Content>
+                <RectangleParent>
+                  <GroupChild />
+                  <GroupItem />
+                  <GroupInner />
+                </RectangleParent>
+              </ContentParent>
+            </Input2>
+          </Innercontainer>
+        </Formcontainer2>
+    </PortalContainer>
   );
 };
 
