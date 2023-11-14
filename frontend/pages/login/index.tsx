@@ -5,6 +5,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import Button from "@/components/button/Button";
+import { baseURL } from "../api/axiosConfig";
 
 
 const GroupChild = styled.div`
@@ -232,7 +233,8 @@ const LoginPageRoot = styled.div`
 `;
 
 const api = axios.create({
-  baseURL: 'http://localhost:8000'  // 백엔드 서버의 주소와 포트를 baseURL로 설정
+  //baseURL: 'http://localhost:8000'  // 백엔드 서버의 주소와 포트를 baseURL로 설정
+  baseURL: baseURL
 });
 
 
