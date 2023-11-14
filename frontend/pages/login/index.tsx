@@ -3,6 +3,10 @@ import axios from 'axios';
 import { useCallback } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import React, { useState, useEffect } from "react";
+import { useRouter } from "next/router";
+import Button from "@/components/button/Button";
+import { baseURL } from "../api/axiosConfig";
+
 
 const GroupChild = styled.div`
   position: absolute;
@@ -229,41 +233,41 @@ const LoginPageRoot = styled.div`
 `;
 
 const api = axios.create({
-  baseURL: 'http://localhost:8000'  // 백엔드 서버의 주소와 포트를 baseURL로 설정
+  //baseURL: 'http://localhost:8000'  // 백엔드 서버의 주소와 포트를 baseURL로 설정
+  baseURL: baseURL
 });
 
 
 const LoginPage = () => {
+  const router = useRouter();
   const [id, setId] = useState("");
-  const handleChangeId = (e) => {
+  const handleChangeId = (e: { target: { value: React.SetStateAction<string>; }; }) => {
     setId(e.target.value);
   }
 
   const [password, setPassword] = useState("");
-  const handleChangePassword = (e) => {
+  const handleChangePassword = (e: { target: { value: React.SetStateAction<string>; }; }) => {
     setPassword(e.target.value);
   }
 
-  const navigate = useNavigate();
-
-  const onContainer1Click = async(e) => {
+  const onContainer1Click = async () => {
     try {
-      const response = await api.post('/api/login/', {
-        username : id,
-        password : password,
-      });
+      // const response = await api.post('/api/login/', {
+      //   username: id,
+      //   password: password,
+      // });
 
 
-      navigate("/write_home", {state : {username : id}});
+      router.push("/email");
     } catch (error) {
       alert("로그인 실패!");
-    } 
+    }
   };
 
-  const onContainer2Click = (e) => {
-    navigate("/signup");
+  const onContainer2Click = () => {
+    router.push("/signup");
   }
-    
+
 
   return (
     <LoginPageRoot>
@@ -272,27 +276,26 @@ const LoginPage = () => {
         <Div>로그인</Div>
       </RectangleParent>
       <Download1Icon alt="" src="/download-1@2x.png" />
-      <Adress type='text' value={id} onChange={handleChangeId} placeholder='  아이디를 입력하세요.'/>
+      <Adress type='text' value={id} onChange={handleChangeId} placeholder='  아이디를 입력하세요.' />
       <Div1>비밀번호</Div1>
-      <Div2>로그인 유지하기</Div2>
       <Div3>이메일</Div3>
-      <Adress1 type='password' value={password} onChange={handleChangePassword} placeholder='  비밀번호를 입력하세요'/>
-      <ToggleOffIcon alt="" src="/toggle-off.svg" />
+      <Adress1 type='password' value={password} onChange={handleChangePassword} placeholder='  비밀번호를 입력하세요' />
       <Div4 onClick={onContainer1Click}>
         <Div5>로그인</Div5>
         <PIcon alt="" src="/3p3.svg" />
       </Div4>
       <B1>로그인</B1>
-          <B2>Mail-GPT</B2>
-          <B3>로그인 하세요.</B3>
+      <B2>Mail-GPT</B2>
+      <B3>로그인 하세요.</B3>
       <LoginPageChild />
       <Div6>
         <Txt>
-          <Span1>{`회원이 아니신가요? `}</Span1>
+          <Span1>{`회원이 아니신가요?`}</Span1>
           <Span onClick={onContainer2Click}>회원 가입</Span>
         </Txt>
       </Div6>
     </LoginPageRoot>
+
   );
 };
 
