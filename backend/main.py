@@ -17,7 +17,6 @@ from googletrans import Translator
 app = FastAPI()
 
 
-
 # env 필요
 origins = [
     "http://localhost:3000",
@@ -195,13 +194,12 @@ async def chatgpt_mail_generate(request: Request, db: Session=Depends(get_db)):
         
             
         if chatgpt_infer == "error":
-            print("error")
-            raise HTTPException(status=400, detail=f"ChatGPT error")
+            return JSONResponse({'message': 'chatgpt error'})
 
         return JSONResponse({'message': '연결 성공', 'data':chatgpt_infer})
     
     except Exception as e:
-        raise HTTPException(status=400, detail=f"An error occurred: {str(e)}")
+        return JSONResponse({'message': str(e)})
 
 
 ############################## send email #######################
@@ -244,7 +242,7 @@ async def send_email(request: Request, db: Session=Depends(get_db)):
         return JSONResponse({'message': '전송 성공'})
     
     except Exception as e:
-        return HTTPException(status=400, detail=f"An error occurred: {str(e)}")
+        return HTTPException(status_code=422, detail=f"An error occurred: {str(e)}")
 
 
 
@@ -299,7 +297,7 @@ async def login(request: Request, db: Session=Depends(get_db)):
     if temp_user_info is not None:
         return JSONResponse({'message': '로그인이 완료되었습니다.', 'data':username})
     else:
-        return HTTPException(status=400, detail='로그인에 실패하였습니다.')
+        return HTTPException(status_code=422, detail='로그인에 실패하였습니다.')
 
 
 ################################# Summary ############################
@@ -342,7 +340,7 @@ async def chatgpt_mail_summarize(request: Request, db: Session=Depends(get_db)):
         
 
         if chatgpt_infer == "error":
-            raise HTTPException(status=400, detail="ChatGPT error")
+            return JSONResponse({'message': 'chatgpt error'})
         else:
             temp_user_msg.summary = chatgpt_infer
             db.add(temp_user_msg)
@@ -351,7 +349,7 @@ async def chatgpt_mail_summarize(request: Request, db: Session=Depends(get_db)):
         return JSONResponse({'message': '연결 성공', 'data':chatgpt_infer})
     
     except Exception as e:
-        return HTTPException(status=400, detail=f"An error occurred: {str(e)}")
+        return JSONResponse({'message': str(e)})
 
 
 ###################################### Show email ############################
@@ -369,11 +367,11 @@ async def show_mail(request: Request, db: Session=Depends(get_db)):
         mailbox.login(email_id, email_key, initial_folder="INBOX")
         
 
-        test_i = 0
+        # test_i = 0
         for msg in mailbox.fetch(limit=False, reverse=False):
             test_i += 1
-            if test_i > 10:
-                break
+            # if test_i > 100:
+            #     break
 
             temp_user_msg = db.query(models.User_receive_log).filter(models.User_receive_log.username == username, models.User_receive_log.sender == msg.from_, models.User_receive_log.date == str(msg.date)).first()
             if temp_user_msg is not None:
