@@ -24,6 +24,8 @@ class User_receive_log(Base):
     __tablename__ = 'user_receive_log'
     idx = Column(Integer, primary_key=True, index=True)
     username = Column(String)
+    date = Column(String)
+    subject = Column(String)
     sender = Column(String)
     contents = Column(String)
     summary = Column(String)
