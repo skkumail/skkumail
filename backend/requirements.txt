@@ -1,3 +1,7 @@
 fastapi
 uvicorn
 keybert
+openai
+imap_tools
+sqlalchemy
+googletrans==4.0.0rc1
