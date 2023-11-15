@@ -1,6 +1,8 @@
-import { useCallback } from "react";
 import styled from "styled-components";
-import { useNavigate } from "react-router-dom";
+//import { useCallback } from "react";
+//import { useNavigate } from "react-router-dom";
+// 혼용하지 말아주세요. build 까지 해보고 commit 해주세요
+import {useRouter} from 'next/router'
 
 const ViewKeywordChild = styled.img`
   position: absolute;
@@ -314,12 +316,11 @@ const ViewKeywordRoot = styled.div`
 `;
 
 const ViewKeyword = () => {
-  const navigate = useNavigate();
+  const router = useRouter();
 
-  const onListContainerClick = useCallback(() => {
-    navigate("/read-the-mail");
-  }, [navigate]);
-
+  const onListContainerClick = () => {
+    router.push("/read-the-mail");
+  };
   return (
     <ViewKeywordRoot>
       <ViewKeywordChild alt="" src="/rectangle-2759.svg" />

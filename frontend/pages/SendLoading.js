@@ -1,6 +1,8 @@
-import { useCallback } from "react";
-import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
+//import { useCallback } from "react";
+//import { useNavigate } from "react-router-dom";
+// 혼용하지 말아주세요. build 까지 해보고 commit 해주세요
+import {useRouter} from 'next/router'
 
 const SendLoadingChild = styled.img`
   position: relative;
@@ -285,11 +287,17 @@ const SendLoadingRoot = styled.div`
 `;
 
 const SendLoading = () => {
+  /*
   const navigate = useNavigate();
 
   const onSendLoadingContainerClick = useCallback(() => {
     navigate("/mail-content-view");
   }, [navigate]);
+  */
+  const router = useRouter();
+  const onSendLoadingContainerClick = () => {
+    router.push("/mail-content-view");
+  };
 
   return (
     <SendLoadingRoot onClick={onSendLoadingContainerClick}>
