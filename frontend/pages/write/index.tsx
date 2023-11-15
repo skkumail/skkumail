@@ -3,6 +3,7 @@ import Button from "@/components/button/Button";
 import PortalContainer from "@/components/container/Container";
 import Popup from "@/components/popup/Popup";
 import Textarea from "@/components/textarea/Textarea";
+import axios from "axios";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import styled from "styled-components";
@@ -312,11 +313,31 @@ const WriteHome = () => {
   // GPT API 부르고 그 결과 값을 바탕으로 팝업 띄우기
   const [isPopup, setIsPopup] = useState<boolean>(false)
   const [generatedEmail, setGeneratedEmail] = useState('')
-  const handleSendRequestButton = (e: any) => {
-    // GPT API call 
 
-    // 성공 시 setGeneratedEmail 하고 팝업 띄우기
-    setIsPopup(true)
+  const api = axios.create({
+    baseURL: 'http://localhost:8000'  // 백엔드 서버의 주소와 포트를 baseURL로 설정
+  });
+  const handleSendRequestButton = async () => {
+    // GPT API call 
+    try {
+      const response = await api.post('/chatgpt', {
+        username: "soo", // test user name
+        send_address: email,
+        contents: content,
+        style: style,
+        name: name,
+        relation: relation,
+      });
+
+      console.log(response);
+
+      // 성공 시 setGeneratedEmail 하고 팝업 띄우기
+      setGeneratedEmail(response.data.data)
+      setIsPopup(true)
+
+    } catch (error) {
+      alert('실패!');
+    }
   }
 
   // 전송 버튼
@@ -349,19 +370,25 @@ const WriteHome = () => {
       </div>
       {isPopup && (
         <Popup title={"GPT 가 작성한 이메일을 확인하세요."} onClose={() => setIsPopup(false)}>
-          <div className="flex flex-col w-full space-y-[10px]">
-            <Textarea customTextClassName="" name={'generatedEmail'} value={generatedEmail} setValue={setGeneratedEmail} placeholder="작성한 내용을 확인하세요" rows={8} />
-            <div className="flex justify-end space-x-[10px]">
-              <Button className='rounded-[7px] py-[12px] px-[28px] border-[2px] border-green-500 bg-white'
-                onClick={() => setIsPopup(false)}>
-                <span className='font-bold text-green-500'>취소</span>
-              </Button>
-              <Button className='rounded-[7px] py-[12px] px-[28px] border-[2px] border-green-500 bg-green-500'
-                onClick={handleSendButton}>
-                <span className='font-bold text-white'>전송</span>
-              </Button>
+          {generatedEmail ? (
+            <div className="flex flex-col w-full space-y-[10px]">
+              <Textarea customTextClassName="" name={'generatedEmail'} value={generatedEmail} setValue={setGeneratedEmail} placeholder="작성한 내용을 확인하세요" rows={8} />
+              <div className="flex justify-end space-x-[10px]">
+                <Button className='rounded-[7px] py-[12px] px-[28px] border-[2px] border-green-500 bg-white'
+                  onClick={() => setIsPopup(false)}>
+                  <span className='font-bold text-green-500'>취소</span>
+                </Button>
+                <Button className='rounded-[7px] py-[12px] px-[28px] border-[2px] border-green-500 bg-green-500'
+                  onClick={handleSendButton}>
+                  <span className='font-bold text-white'>전송</span>
+                </Button>
+              </div>
             </div>
-          </div>
+          ) : (
+            <div className="flex w-full text-black">
+              메일을 생성 중입니다.
+            </div>
+          )}
         </Popup>
       )}
     </PortalContainer>

@@ -2,6 +2,7 @@ import Topbar from "@/components/bar/Topbar";
 import Button from "@/components/button/Button";
 import PortalContainer from "@/components/container/Container";
 import Textarea from "@/components/textarea/Textarea";
+import axios from "axios";
 import { useRouter } from "next/router";
 import { FunctionComponent, useState } from "react";
 import styled from "styled-components";
@@ -192,34 +193,44 @@ const SignupPage: FunctionComponent = () => {
 
   const router = useRouter();
   const [id, setId] = useState("");
-  const handleChangeId = (e: { target: { value: React.SetStateAction<string>; }; }) => {
-    setId(e.target.value);
-  }
+  
 
   const [password, setPassword] = useState("");
-  const handleChangePassword = (e: { target: { value: React.SetStateAction<string>; }; }) => {
-    setPassword(e.target.value);
-  }
+  
 
   const [passwordAgain, setPasswordAgain] = useState("");
-  const handleChangePasswordAgain = (e: { target: { value: React.SetStateAction<string>; }; }) => {
-    setPasswordAgain(e.target.value);
-  }
+  
 
   const [email, setEmail] = useState("");
-  const handleChangeEmail = (e: { target: { value: React.SetStateAction<string>; }; }) => {
-    setEmail(e.target.value);
-  }
+  
 
   const [verification, setVerification] = useState('')
-  const onClickVerification = (e: any) => {
-    console.log('인증 번호 전송');
+  
 
-  }
+  // localhost:8000 test
+  const api = axios.create({
+    baseURL: 'http://localhost:8000'  // 백엔드 서버의 주소와 포트를 baseURL로 설정
+  });
 
-  const onClickSignUp = (e: any) => {
-    console.log('계정 생성');
-  }
+  //register test
+  const onClickSignUp = async (e: any) => {
+    try {
+      const response = await api.post('/register', {
+        username: id,
+        password: password,
+        password_config: password,
+        gmail_id: email,
+        gmail_key: verification
+      });
+
+      console.log(response);
+      alert('계정 생성에 성공하였습니다!')
+      router.push('/')
+    } catch (error) {
+      alert('실패!');
+    }
+  };
+
 
   return (
     <PortalContainer layoutClassName="mx-auto mb-[100px] mt-[200px] flex items-center justify-center w-full" topbar={<Topbar isLogin={true} />}>
@@ -227,14 +238,11 @@ const SignupPage: FunctionComponent = () => {
         <div className="text-black text-[20px] font-medium mb-[20px]">회원가입 하세요.</div>
         <div className="flex flex-col space-y-[15px]">
           <Textarea name={'id'} value={id} setValue={setId} placeholder="아이디를 입력하세요." rows={1} />
-          <Textarea name={'email'} value={id} setValue={setEmail} placeholder="이메일을 입력하세요." rows={1} />
-          <Textarea name={'password'} value={id} setValue={setPassword} placeholder="비밀번호를 입력하세요." rows={1} />
-          <Textarea name={'passwordAgain'} value={id} setValue={setPasswordAgain} placeholder="비밀번호를 재입력하세요." rows={1} />
-          <Button className='rounded-[7px] py-[12px] px-[28px] border-[2px] border-green-500 bg-green-500'
-            onClick={onClickVerification}>
-            <span className='font-bold text-white'>인증 번호 전송</span>
-          </Button>
-          <Textarea name={'verification'} value={verification} setValue={setVerification} placeholder="인증번호를 입력하세요." rows={1} />
+          <Textarea name={'email'} value={email} setValue={setEmail} placeholder="이메일을 입력하세요." rows={1} />
+          <Textarea name={'password'} value={password} setValue={setPassword} placeholder="비밀번호를 입력하세요." rows={1} />
+          <Textarea name={'passwordAgain'} value={passwordAgain} setValue={setPasswordAgain} placeholder="비밀번호를 재입력하세요." rows={1} />
+
+          <Textarea name={'verification'} value={verification} setValue={setVerification} placeholder="2단계 인증키를 입력하세요." rows={1} />
         </div>
         <Button className='rounded-[7px] py-[12px] px-[28px] border-[2px] border-green-500 bg-green-500 mt-[50px] w-full'
           onClick={onClickSignUp}>

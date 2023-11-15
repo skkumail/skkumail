@@ -61,6 +61,6 @@ const Textarea = (props: TextareaProps) => {
 
 export default Textarea
 
-const TextareaInput = tw.textarea`min-w-[320px] text-black focus:outline-none !ring-0 resize-none border-[1px] border-gray rounded-[8px] p-[16px] bg-white focus:bg-gray`
+const TextareaInput = tw.textarea`min-w-[320px] text-black focus:outline-none !ring-0 resize-none border-[1px] border-gray rounded-[8px] p-[16px] bg-white`
 
 const CONTAINER_CLASSNAME = 'flex flex-col space-y-[4px]'

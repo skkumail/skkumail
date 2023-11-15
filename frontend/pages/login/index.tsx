@@ -18,27 +18,26 @@ const api = axios.create({
 const LoginPage = () => {
   const router = useRouter();
   const [id, setId] = useState("");
-  const handleChangeId = (e: { target: { value: React.SetStateAction<string>; }; }) => {
-    setId(e.target.value);
-  }
 
   const [password, setPassword] = useState("");
-  const handleChangePassword = (e: { target: { value: React.SetStateAction<string>; }; }) => {
-    setPassword(e.target.value);
-  }
 
-  const onClickLogin = async () => {
+  const api = axios.create({
+    baseURL: 'http://localhost:8000'  // 백엔드 서버의 주소와 포트를 baseURL로 설정
+  });
+
+  const onClickLogin = async() => {
     try {
-      // const response = await api.post('/api/login/', {
-      //   username: id,
-      //   password: password,
-      // });
-
-
-      router.push("/email");
+      const response = await api.post('/login', {
+        username : id,
+        password : password
+      });
+      
+      console.log(response);
+      alert('로그인 되었습니다.')
+      router.push('/email')
     } catch (error) {
-      alert("로그인 실패!");
-    }
+      alert('실패!');
+    } 
   };
 
   const onClickSignUp = () => {
