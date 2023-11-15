@@ -44,8 +44,8 @@ const EmailDetail = () => {
 
     // 키워드 추출 관련
     const [keywords, setKeywords] = useState([])
-    //const serverUrl = "http://127.0.0.1:8000" // env 빼기
-    const serverUrl = baseURL;
+    const serverUrl = "http://127.0.0.1:8000" // env 빼기
+    // const serverUrl = baseURL;
 
     const handleKeywordExtractBtn = async (content: string) => {
         const payload = {

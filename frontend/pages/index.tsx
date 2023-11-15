@@ -9,19 +9,7 @@ import LoginPage from './login';
 
 
 export default function Home() {
-  const [message, setMessage] = useState('');
   const router = useRouter();
-
-  useEffect(() => {
-    fetch('/api/hello')
-      .then(response => response.json())
-      .then(data => setMessage(data.message));
-  }, []);
-
-  const handleButtonClick = () => {
-    // Use router.push to navigate to the desired page
-    router.push('/email');
-  };
 
   return (
     <PortalContainer layoutClassName="mx-auto mb-[120px] mt-[60px] w-full">
