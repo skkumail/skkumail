@@ -11,6 +11,8 @@ import smtplib
 from email.mime.text import MIMEText
 import openai
 from imap_tools import MailBox
+import os
+from googletrans import Translator
 
 app = FastAPI()
 
@@ -63,6 +65,8 @@ class User_send_log(BaseModel):
 
 class User_receive_log(BaseModel):  
     username:str = Field(min_length=1)
+    date:str = Field(min_length=1)
+    subject:str = Field(min_length=1)
     sender:str = Field(min_length=1)
     contents:str = Field(min_length=1)
     summary:str = Field(min_length=1)
@@ -72,39 +76,45 @@ class User_receive_log(BaseModel):
     num:int = Field(gt=0)
 
 
-
-# @app.post("/")
-# async def default_setting(request: Request):
-#     print("here")
-#     return JSONResponse({'data':"hello"})
-
-
-
+########################### Keyword Extract #######################
 # KeyBERT 모델 로딩
 keybert_model = KeyBERT("distilbert-base-nli-mean-tokens")
 
 @app.post("/extract_keywords")
-async def extract_keywords(request: Request):
+async def extract_keywords(request: Request, db: Session=Depends(get_db)):
     try:
         # JSON 데이터를 추출
         data = await request.json()
-        email_text = data.get("email_text")
+        username = data.get('username')
+        sender = data.get('sender')
+        num = data.get('num')
+        temp_user_msg = db.query(models.User_receive_log).filter(models.User_receive_log.username == username, models.User_receive_log.sender == sender, models.User_receive_log.num == int(num)).first()
 
-        if email_text is None:
-            raise HTTPException(
-                status_code=422, detail="Missing 'email_text' field in the request body"
+        
+        if temp_user_msg.keyword is not None:
+            total_list = eval(temp_user_msg.keyword)
+        
+        else:
+            email_text = temp_user_msg.contents
+            if email_text is None:
+                raise HTTPException(
+                    status_code=422, detail="Missing 'email_text' field in the request body"
+                )
+            # KeyBERT를 사용하여 키워드 추출
+            keywords = keybert_model.extract_keywords(
+                email_text, keyphrase_ngram_range=(1, 1), top_n = 5, stop_words="english"
             )
 
-        # KeyBERT를 사용하여 키워드 추출
-        keywords = keybert_model.extract_keywords(
-            email_text, keyphrase_ngram_range=(1, 1), stop_words="english"
-        )
-
-        print(keywords)
+            total_list = []
+            for i in range(len(keywords)):
+                total_list.append(keywords[i][0])
+            
+            temp_user_msg.keyword = str(total_list)
+            db.add(temp_user_msg)
+            db.commit()
 
         # 추출된 키워드를 JSON 형식으로 반환
-        response_data = {"keywords": keywords}
-        return JSONResponse(content=response_data)
+        return JSONResponse({'message': '연결 성공', "data":total_list})
     except Exception as e:
         # 오류가 발생한 경우 500 Internal Server Error 반환
         raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
@@ -319,15 +329,92 @@ def mail_summary(text):
 async def chatgpt_mail_summarize(request: Request, db: Session=Depends(get_db)):
     try:
         data = await request.json()
-        contents = data.get('contents')
-        
-        chatgpt_infer= mail_summary(contents)
+        username = data.get('username')
+        sender = data.get('sender')
+        num = data.get('num')
+        temp_user_msg = db.query(models.User_receive_log).filter(models.User_receive_log.username == username, models.User_receive_log.sender == sender, models.User_receive_log.num == int(num)).first()
 
-            
+        if temp_user_msg.summary is not None:
+            return JSONResponse({'message': '연결 성공', 'data':temp_user_msg.summary})
+    
+
+        chatgpt_infer= mail_summary(temp_user_msg.contents)
+        
+
         if chatgpt_infer == "error":
             raise HTTPException(status=400, detail="ChatGPT error")
+        else:
+            temp_user_msg.summary = chatgpt_infer
+            db.add(temp_user_msg)
+            db.commit()
 
         return JSONResponse({'message': '연결 성공', 'data':chatgpt_infer})
     
     except Exception as e:
-        raise HTTPException(status=400, detail=f"An error occurred: {str(e)}")
+        return HTTPException(status=400, detail=f"An error occurred: {str(e)}")
+
+
+###################################### Show email ############################
+@app.post("/showmail")
+async def show_mail(request: Request, db: Session=Depends(get_db)):
+    try:
+        data = await request.json()
+        username = data.get('username')
+
+        temp_user=db.query(models.User_info).filter(models.User_info.username==username).first()    
+        email_id = temp_user.email_id
+        email_key = temp_user.email_key
+
+        mailbox = MailBox("imap.gmail.com", 993)
+        mailbox.login(email_id, email_key, initial_folder="INBOX")
+        
+
+        test_i = 0
+        for msg in mailbox.fetch(limit=False, reverse=False):
+            test_i += 1
+            if test_i > 10:
+                break
+
+            temp_user_msg = db.query(models.User_receive_log).filter(models.User_receive_log.username == username, models.User_receive_log.sender == msg.from_, models.User_receive_log.date == str(msg.date)).first()
+            if temp_user_msg is not None:
+                continue
+            else:
+                temp_num = len(db.query(models.User_receive_log).filter(models.User_receive_log.username == username, models.User_receive_log.sender == msg.from_).all())
+                temp_receive_mail = models.User_receive_log()
+                temp_receive_mail.username = username
+                temp_receive_mail.date = msg.date
+                temp_receive_mail.subject = msg.subject
+                temp_receive_mail.sender = msg.from_
+                temp_receive_mail.contents = msg.text
+                temp_receive_mail.num = temp_num+1    
+                db.add(temp_receive_mail)
+                db.commit()
+        mailbox.logout()
+
+        total_list = []
+        for temp_item in db.query(models.User_receive_log).filter(models.User_receive_log.username == username).all():
+            total_list.append([temp_item.date, temp_item.subject, temp_item.sender, temp_item.contents])
+
+        return JSONResponse({'message': '연결 성공', 'data':total_list})
+    
+    except Exception as e:
+        return JSONResponse({'message': '연결 fail', 'data':str(e)})
+
+
+
+################################ Translate ###########################
+@app.post("/translate")
+async def translate_text(request: Request, db: Session=Depends(get_db)):
+    try:
+        data = await request.json()
+
+        pre_text = data.get('contents')
+
+        translator = Translator()
+        result = translator.translate(pre_text, dest='ko').text
+        
+
+        return JSONResponse({'message': '연결 성공', 'data':result})
+    
+    except Exception as e:
+        return JSONResponse({'message': '연결 fail', 'data':str(e)})
