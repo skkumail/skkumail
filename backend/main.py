@@ -24,11 +24,11 @@ origins = [
     "http://127.0.0.1:3000"   
 ]
 
-# FRONTEND_HOST = os.environ.get('FRONTEND_HOST')
-# FRONTEND_PORT = os.environ.get('FRONTEND_PORT')
-# if FRONTEND_HOST and FRONTEND_PORT:
-#     new_origin = f"http://{FRONTEND_HOST}:{FRONTEND_PORT}"
-#     origins.append(new_origin)
+FRONTEND_HOST = os.environ.get('FRONTEND_HOST')
+FRONTEND_PORT = os.environ.get('FRONTEND_PORT')
+if FRONTEND_HOST and FRONTEND_PORT:
+    new_origin = f"http://{FRONTEND_HOST}:{FRONTEND_PORT}"
+    origins.append(new_origin)
 
 app.add_middleware(
     CORSMiddleware,
