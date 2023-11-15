@@ -1,5 +1,10 @@
 import Topbar from "@/components/bar/Topbar";
+import Button from "@/components/button/Button";
 import PortalContainer from "@/components/container/Container";
+import Popup from "@/components/popup/Popup";
+import Textarea from "@/components/textarea/Textarea";
+import { useRouter } from "next/router";
+import { useState } from "react";
 import styled from "styled-components";
 
 const NewIcon = styled.img`
@@ -297,83 +302,68 @@ const WriteHomeRoot = styled.div`
 `;
 
 const WriteHome = () => {
+  const router = useRouter()
+  const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
+  const [relation, setRelation] = useState('')
+  const [style, setStyle] = useState('')
+  const [content, setContent] = useState('')
+
+  // GPT API 부르고 그 결과 값을 바탕으로 팝업 띄우기
+  const [isPopup, setIsPopup] = useState<boolean>(false)
+  const [generatedEmail, setGeneratedEmail] = useState('')
+  const handleSendRequestButton = (e: any) => {
+    // GPT API call 
+
+    // 성공 시 setGeneratedEmail 하고 팝업 띄우기
+    setIsPopup(true)
+  }
+
+  // 전송 버튼
+  const handleSendButton = () => {
+    setIsPopup(false)
+    // 메일 전송 API 부르기
+    router.push('/write/write_complete')
+  }
+
+
   return (
-    <PortalContainer topbar={<Topbar />}>
-        <Div>메일을 전송해보세요.</Div>
-        <Formcontainer>
-          <Input>
-            <Top1>
-              <InputContent>
-                <Placehoder>수신인 이름을 입력하세요.</Placehoder>
-              </InputContent>
-            </Top1>
-          </Input>
-          <Input>
-            <Top1>
-              <InputContent>
-                <Placehoder>수신인 이메일을 입력하세요.</Placehoder>
-              </InputContent>
-            </Top1>
-          </Input>
-          <Select>
-            <BottomParent>
-              <Bottom>
-                <Label />
-              </Bottom>
-              <Top2>
-                <InputContent2>
-                  <InputContent>
-                    <Placehoder>수신인과의 관계를 선택하세요.</Placehoder>
-                  </InputContent>
-                  <FichevronDownIcon alt="" src="/fichevrondown.svg" />
-                </InputContent2>
-              </Top2>
-            </BottomParent>
-          </Select>
-        </Formcontainer>
-        <Formcontainer1>
-          <Select1>
-            <BottomParent>
-              <Bottom>
-                <Label />
-              </Bottom>
-              <Top2>
-                <InputContent2>
-                  <InputContent>
-                    <Placehoder>메일 작성 스타일을 선택하세요.</Placehoder>
-                  </InputContent>
-                  <FichevronDownIcon alt="" src="/fichevrondown.svg" />
-                </InputContent2>
-              </Top2>
-            </BottomParent>
-          </Select1>
-        </Formcontainer1>
-        <Component8>
-          <Label2>작성 요청</Label2>
-        </Component8>
-        <Formcontainer2>
-          <Innercontainer>
-            <Heading>
-              <Label>핵심 내용 작성</Label>
-            </Heading>
-            <Input2>
-              <ContentParent>
-                <Content>
-                  <InputContent>
-                    <Placehoder>생성된 이메일 확인 및 수정</Placehoder>
-                    <Valid />
-                  </InputContent>
-                  <CheckIcon alt="" src="/check.svg" />
-                </Content>
-                <RectangleParent>
-                  <GroupChild />
-                  <GroupItem />
-                  <GroupInner />
-                </RectangleParent>
-              </ContentParent>
-            </Input2>
-          </Innercontainer>
-        </Formcontainer2>
+    <PortalContainer layoutClassName="m-20" topbar={<Topbar />}>
+      <div className="text-black text-[20px] font-medium mb-[20px]">메일을 전송해보세요.</div>
+      <div className="flex border-[1px] rounded-[10px] border-gray bg-white justify-start items-start w-full p-[20px] space-x-[10px] mb-10">
+        <Textarea name={'name'} value={name} setValue={setName} placeholder="수신인을 입력하세요." rows={1} />
+        <Textarea name={'email'} value={email} setValue={setEmail} placeholder="수신인 이메일을 입력하세요." rows={1} />
+        <Textarea name={'relation'} value={relation} setValue={setRelation} placeholder="수신인과의 관계를 입력하세요." rows={1} />
+      </div>
+      <div className="flex border-[1px] rounded-[10px] border-gray bg-white justify-start items-start w-full p-[20px] space-x-[10px] mb-10">
+        <Textarea name={'style'} value={style} setValue={setStyle} placeholder="메일 작성 스타일을 입력하세요." rows={1} />
+      </div>
+      <div className="flex border-[1px] rounded-[10px] border-gray bg-white justify-start items-start w-full p-[20px] space-x-[10px] mb-10">
+        <Textarea customTextClassName="w-[800px]" name={'content'} value={content} setValue={setContent} placeholder="핵심 내용을 입력하세요." rows={5} />
+      </div>
+      <div className="flex justify-end">
+        <Button className='rounded-[7px] py-[12px] px-[28px] border-[2px] border-green-500 bg-green-500'
+          onClick={handleSendRequestButton}>
+          <span className='font-bold text-white'>작성 요청</span>
+        </Button>
+      </div>
+      {isPopup && (
+        <Popup title={"GPT 가 작성한 이메일을 확인하세요."} onClose={() => setIsPopup(false)}>
+          <div className="flex flex-col w-full space-y-[10px]">
+            <Textarea customTextClassName="" name={'generatedEmail'} value={generatedEmail} setValue={setGeneratedEmail} placeholder="작성한 내용을 확인하세요" rows={8} />
+            <div className="flex justify-end space-x-[10px]">
+              <Button className='rounded-[7px] py-[12px] px-[28px] border-[2px] border-green-500 bg-white'
+                onClick={() => setIsPopup(false)}>
+                <span className='font-bold text-green-500'>취소</span>
+              </Button>
+              <Button className='rounded-[7px] py-[12px] px-[28px] border-[2px] border-green-500 bg-green-500'
+                onClick={handleSendButton}>
+                <span className='font-bold text-white'>전송</span>
+              </Button>
+            </div>
+          </div>
+        </Popup>
+      )}
     </PortalContainer>
   );
 };
