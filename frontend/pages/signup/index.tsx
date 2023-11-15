@@ -1,5 +1,9 @@
+import Topbar from "@/components/bar/Topbar";
+import Button from "@/components/button/Button";
 import PortalContainer from "@/components/container/Container";
-import { FunctionComponent } from "react";
+import Textarea from "@/components/textarea/Textarea";
+import { useRouter } from "next/router";
+import { FunctionComponent, useState } from "react";
 import styled from "styled-components";
 
 const GroupChild = styled.div`
@@ -185,57 +189,58 @@ const SignupPageRoot = styled.div`
 `;
 
 const SignupPage: FunctionComponent = () => {
+
+  const router = useRouter();
+  const [id, setId] = useState("");
+  const handleChangeId = (e: { target: { value: React.SetStateAction<string>; }; }) => {
+    setId(e.target.value);
+  }
+
+  const [password, setPassword] = useState("");
+  const handleChangePassword = (e: { target: { value: React.SetStateAction<string>; }; }) => {
+    setPassword(e.target.value);
+  }
+
+  const [passwordAgain, setPasswordAgain] = useState("");
+  const handleChangePasswordAgain = (e: { target: { value: React.SetStateAction<string>; }; }) => {
+    setPasswordAgain(e.target.value);
+  }
+
+  const [email, setEmail] = useState("");
+  const handleChangeEmail = (e: { target: { value: React.SetStateAction<string>; }; }) => {
+    setEmail(e.target.value);
+  }
+
+  const [verification, setVerification] = useState('')
+  const onClickVerification = (e: any) => {
+    console.log('인증 번호 전송');
+
+  }
+
+  const onClickSignUp = (e: any) => {
+    console.log('계정 생성');
+  }
+
   return (
-    <PortalContainer>
-        <RectangleParent>
-          <GroupChild />
-          <Div>로그인</Div>
-        </RectangleParent>
-        <Formcontainer>
-          <Innercontainer>
-            <Div1>계정을 만들어보세요.</Div1>
-            <Inputcontainer>
-              <Innerformcontainer>
-                <Input>
-                  <InputContent>
-                    <Label>아이디</Label>
-                    <Placehoder>아이디를 입력하세요.</Placehoder>
-                  </InputContent>
-                </Input>
-                <Input>
-                  <InputContent>
-                    <Label>Email</Label>
-                    <Placehoder>이메일 주소를 입력하세요.</Placehoder>
-                  </InputContent>
-                </Input>
-                <Input>
-                  <InputContent>
-                    <Label>비밀번호</Label>
-                    <Placehoder>비밀번호를 입력하세요.</Placehoder>
-                  </InputContent>
-                </Input>
-                <Input>
-                  <InputContent>
-                    <Label>비밀번호 확인</Label>
-                    <Placehoder>비밀번호를 재입력하세요.</Placehoder>
-                  </InputContent>
-                </Input>
-                <Component6>
-                  <Label4>인증 번호 전송</Label4>
-                </Component6>
-                <Input>
-                  <InputContent>
-                    <Label>인증 번호 입력</Label>
-                    <Placehoder>인증번호를 입력하세요.</Placehoder>
-                  </InputContent>
-                </Input>
-              </Innerformcontainer>
-            </Inputcontainer>
-            <Component6>
-              <Label4>게정 생성</Label4>
-            </Component6>
-          </Innercontainer>
-        </Formcontainer>
+    <PortalContainer layoutClassName="mx-auto mb-[100px] mt-[200px] flex items-center justify-center w-full" topbar={<Topbar isLogin={true} />}>
+      <div className="flex flex-col border-[1px] rounded-[10px] border-gray bg-white justify-center items-start w-fit p-[20px]">
+        <div className="text-black text-[20px] font-medium mb-[20px]">회원가입 하세요.</div>
+        <div className="flex flex-col space-y-[15px]">
+          <Textarea name={'id'} value={id} setValue={setId} placeholder="아이디를 입력하세요." rows={1} />
+          <Textarea name={'email'} value={id} setValue={setEmail} placeholder="이메일을 입력하세요." rows={1} />
+          <Textarea name={'password'} value={id} setValue={setPassword} placeholder="비밀번호를 입력하세요." rows={1} />
+          <Textarea name={'passwordAgain'} value={id} setValue={setPasswordAgain} placeholder="비밀번호를 재입력하세요." rows={1} />
+          <Button className='rounded-[7px] py-[12px] px-[28px] border-[2px] border-green-500 bg-green-500'
+            onClick={onClickVerification}>
+            <span className='font-bold text-white'>인증 번호 전송</span>
+          </Button>
+          <Textarea name={'verification'} value={verification} setValue={setVerification} placeholder="인증번호를 입력하세요." rows={1} />
+        </div>
+        <Button className='rounded-[7px] py-[12px] px-[28px] border-[2px] border-green-500 bg-green-500 mt-[50px] w-full'
+          onClick={onClickSignUp}>
+          <span className='font-bold text-white'>계정 생성</span>
+        </Button>
+      </div>
     </PortalContainer>
   );
 };

@@ -12,7 +12,7 @@ export default function Home() {
   const router = useRouter();
 
   return (
-    <PortalContainer layoutClassName="mx-auto mb-[120px] mt-[60px] w-full">
+    <PortalContainer layoutClassName="mx-auto mb-[100px] mt-[200px] flex items-center justify-center w-full" topbar={<Topbar isLogin={true} />}>
       <LoginPage />
     </PortalContainer>
   );
