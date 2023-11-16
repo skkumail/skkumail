@@ -1,7 +1,7 @@
 import { useRef } from 'react'
 import tw from 'twin.macro'
 
-interface TextareaProps {
+interface InputProps {
   name: string
   value?: string
   setValue: React.Dispatch<React.SetStateAction<string>>
@@ -12,9 +12,10 @@ interface TextareaProps {
   autoFocus?: boolean
   customTextClassName?: string
   disabled?: boolean
+  type?: string
 }
 
-const Textarea = (props: TextareaProps) => {
+const Input = (props: InputProps) => {
   const {
     name,
     value,
@@ -24,11 +25,12 @@ const Textarea = (props: TextareaProps) => {
     autoFocus = false,
     customTextClassName,
     disabled,
+    type
   } = props
 
-  const ref = useRef<HTMLTextAreaElement>(null)
+  const ref = useRef<HTMLInputElement>(null)
 
-  const onChange: React.ChangeEventHandler<HTMLTextAreaElement> = (e) => {
+  const onChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
     setValue(e.target.value)
   }
 
@@ -36,24 +38,24 @@ const Textarea = (props: TextareaProps) => {
 
   return (
     <div className={containerClassName}>
-      <TextareaInput
+      <InputInput
         ref={ref}
         value={value}
         onChange={onChange}
-        rows={rows}
         placeholder={placeholder}
         autoFocus={autoFocus}
         name={name}
         draggable={false}
         className={customTextClassName}
         disabled={disabled}
+        type={type}
       />
     </div>
   )
 }
 
-export default Textarea
+export default Input
 
-const TextareaInput = tw.textarea`min-w-[320px] text-black focus:outline-none !ring-0 resize-none border-[1px] border-gray rounded-[8px] p-[16px] bg-white`
+const InputInput = tw.input`min-w-[320px] text-black focus:outline-none !ring-0 resize-none border-[1px] border-gray rounded-[8px] p-[16px] bg-white`
 
 const CONTAINER_CLASSNAME = 'flex flex-col space-y-[4px]'
