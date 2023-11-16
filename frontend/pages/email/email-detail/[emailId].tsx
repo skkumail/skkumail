@@ -34,35 +34,60 @@ const EmailDetail = () => {
         : 1
 
     // To-do: API 로 받아야 함
-    const myEmail = mockEmails.filter((item) => item.id === emailId)[0]
-    const title = myEmail.title
-    const receiver = myEmail.receiver
-    const sender = myEmail.sender
-    const date = myEmail.date
-    const content = myEmail.content
-    const htmlContent = `${content.replace(/\n/g, '<br />')}`;
+    const [data, setData] = useState([])
+    const [searchValue, setSearchValue] = useState('')
 
-    // 키워드 추출 관련
-    const [keywords, setKeywords] = useState([])
-    const serverUrl = "http://127.0.0.1:8000" // env 빼기
-    // const serverUrl = baseURL;
+    const api = axios.create({
+        baseURL: `${process.env.NEXT_PUBLIC_BACKEND_HOST}:${process.env.NEXT_PUBLIC_BACKEND_PORT}`  // 백엔드 서버의 주소와 포트를 baseURL로 설정
+    });
 
-    const handleKeywordExtractBtn = async (content: string) => {
-        const payload = {
-            email_text: content
-        }
-        const response = await axios.post(`${serverUrl}/extract_keywords`, payload) // env 분리 필요
+    const fetchData = async () => {
+        try {
+            const response = await api.post('/showmail', {
+                username: 'slim'
+            });
 
-        if (response.status == 200) {
-            setKeywords(response.data.keywords)
+            console.log(response);
+
+            setData(response.data.data)
+        } catch (error) {
+            alert('실패!');
         }
     }
 
     useEffect(() => {
-        handleKeywordExtractBtn(content)
-    }, [content])
+        fetchData()
+    }, [])
 
-    // popup 관련
+
+    const [myEmail, setMyEmail] = useState<string[]>([])
+
+    useEffect(() => {
+        if (data) {
+            const foundItem = data.find((_item, idx) => idx === emailId);
+            setMyEmail(foundItem ?? []);
+        }
+    }, [data])
+
+    // 키워드 추출 관련
+    const [keywords, setKeywords] = useState([])
+
+    // const handleKeywordExtractBtn = async (content: string) => {
+    //     const payload = {
+    //         email_text: content
+    //     }
+    //     const response = await axios.post(`/extract_keywords`, payload)
+
+    //     if (response.status == 200) {
+    //         setKeywords(response.data.keywords)
+    //     }
+    // }
+
+    // useEffect(() => {
+    //     handleKeywordExtractBtn(content)
+    // }, [content])
+
+    // popup 관련 (키워드 추출)
     const [isPopupOpen, setPopupOpen] = useState(false);
 
     const openPopup = () => {
@@ -73,46 +98,82 @@ const EmailDetail = () => {
         setPopupOpen(false);
     };
 
+    // popup 관련 (요약 추출)
+    const [isSumPopupOpen, setSumPopupOpen] = useState(false);
+
+    const openSumPopup = () => {
+        setSumPopupOpen(true);
+    };
+
+    const closeSumPopup = () => {
+        setSumPopupOpen(false);
+    };
+
+    const content = myEmail && myEmail[3] ? myEmail[3] : '';
+    const htmlContent = `${content ? content.replace(/\n/g, '<br />') : ''}`;
+
+
     return (
         <PortalContainer topbar={<Topbar />}>
-            <div className="flex flex-col space-y-[40px]">
-                <div className="flex flex-col p-[32px] border-[1px] m-[32px] rounded-[5px] border-green-500">
-                    <div className="font-bold text-[32px] text-black">{title}</div>
-                    <div className="mt-[20px] flex flex-col">
-                        <div>
-                            <span className="font-medium text-[16px] text-gray">수신인: {receiver}</span>
+            <>
+                {
+                    myEmail.length > 1 && (
+                        <div className="flex flex-col space-y-[40px]">
+                            <div className="flex flex-col p-[32px] border-[1px] m-[32px] rounded-[5px] border-green-500">
+                                <div className="font-bold text-[32px] text-black">{myEmail[1]}</div>
+                                <div className="mt-[20px] flex flex-col">
+                                    <div>
+                                        <span className="font-medium text-[16px] text-gray">수신인: {"slim"}</span>
+                                    </div>
+                                    <div className="flex flex-row justify-between">
+                                        <span className="font-medium text-[16px] text-gray">송신인: {myEmail[2]}</span>
+                                        <span className="font-medium text-[16px] text-gray">날짜: {myEmail[0]}</span>
+                                    </div>
+                                </div>
+                                <div
+                                    style={{ height: 1 }}
+                                    className='bg-gray mt-[20px]'
+                                ></div>
+                                <div className="flex m-[20px]">
+                                    <div className="font-medium text-[16px] text-black" dangerouslySetInnerHTML={{ __html: htmlContent }} />
+                                </div>
+                            </div>
+                            <div className="flex px-[32px] justify-end space-x-[10px]">
+                                <Button className='rounded-[7px] py-[12px] px-[28px] border-[2px] border-green-500 bg-green-500'
+                                    onClick={() => {
+                                        openPopup()
+                                    }}>
+                                    <span className='font-bold text-white'>키워드 보기</span>
+                                </Button>
+                                <Button className='rounded-[7px] py-[12px] px-[28px] border-[2px] border-green-500 bg-green-500'
+                                    onClick={() => {
+                                        openPopup()
+                                    }}>
+                                    <span className='font-bold text-white'>요약 보기</span>
+                                </Button>
+                            </div>
                         </div>
-                        <div className="flex flex-row justify-between">
-                            <span className="font-medium text-[16px] text-gray">송신인: {sender}</span>
-                            <span className="font-medium text-[16px] text-gray">날짜: {date}</span>
+                    )
+                }
+                {isPopupOpen &&
+                    <Popup title={"해당 이메일의 키워드 목록입니다."} onClose={closePopup}>
+                        <div className="flex flex-col space-y-[10px] w-full">
+                            {keywords.map((keyI, idx) => (
+                                <KeywordItem key={`${idx}-${keyI[0]}`} keyword={keyI[0]} />
+                            ))}
                         </div>
-                    </div>
-                    <div
-                        style={{ height: 1 }}
-                        className='bg-gray mt-[20px]'
-                    ></div>
-                    <div className="flex m-[20px]">
-                        <div className="font-medium text-[16px] text-black" dangerouslySetInnerHTML={{ __html: htmlContent }} />
-                    </div>
-                </div>
-                <div className="flex px-[32px] justify-end">
-                    <Button className='rounded-[7px] py-[12px] px-[28px] border-[2px] border-green-500 bg-green-500'
-                        onClick={() => {
-                            openPopup()
-                        }}>
-                        <span className='font-bold text-white'>키워드 보기</span>
-                    </Button>
-                </div>
-            </div>
-            {isPopupOpen &&
-                <Popup title={"해당 이메일의 키워드 목록입니다."} onClose={closePopup}>
-                    <div className="flex flex-col space-y-[10px] w-full">
-                        {keywords.map((keyI, idx) => (
-                            <KeywordItem key={`${idx}-${keyI[0]}`} keyword={keyI[0]} />
-                        ))}
-                    </div>
-                </Popup>
-            }
+                    </Popup>
+                }
+                {isSumPopupOpen &&
+                    <Popup title={"해당 이메일의 요약입니다."} onClose={closeSumPopup}>
+                        <div className="flex flex-col space-y-[10px] w-full">
+                            {keywords.map((keyI, idx) => (
+                                <KeywordItem key={`${idx}-${keyI[0]}`} keyword={keyI[0]} />
+                            ))}
+                        </div>
+                    </Popup>
+                }
+            </>
         </PortalContainer>
     )
 }

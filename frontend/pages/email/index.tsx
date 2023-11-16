@@ -1,16 +1,17 @@
 import Topbar from "@/components/bar/Topbar"
 import PortalContainer from "@/components/container/Container"
 import SearchInput from "@/components/input/SearchInput"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { mockEmails, EmailProps } from "../../data/mockData"
 import { useRouter } from "next/router"
+import axios from "axios"
 
 interface MailItemProps {
     id: number
     sender: string
     title: string
     email: string
-    onClick: (emailId: number) => void 
+    onClick: (emailId: number) => void
 }
 
 const MailItem = ({ id, sender, title, email, onClick }: MailItemProps) => {
@@ -25,15 +26,37 @@ const MailItem = ({ id, sender, title, email, onClick }: MailItemProps) => {
                     <div className="mx-[8px] h-[16px] w-[1px] bg-gray"></div>
                     <span className="text-[20px] font-bold text-black">{title}</span>
                 </div>
-                <span className="font-medium text-[10px] text-gray">{email}</span>
+                {/* <span className="font-medium text-[10px] text-gray">{email}</span> */}
             </div>
         </div>
     )
 }
 
 const Email = () => {
-    // To-do: Data From API
+    const [data, setData] = useState([])
     const [searchValue, setSearchValue] = useState('')
+
+    const api = axios.create({
+        baseURL: `${process.env.NEXT_PUBLIC_BACKEND_HOST}:${process.env.NEXT_PUBLIC_BACKEND_PORT}`  // 백엔드 서버의 주소와 포트를 baseURL로 설정
+    });
+
+    const fetchData = async () => {
+          try {
+            const response = await api.post('/showmail', {
+              username : 'slim'
+            });
+
+            console.log(response);
+
+            setData(response.data.data)
+          } catch (error) {
+            alert('실패!');
+          } 
+    }
+
+    useEffect(() => {
+        fetchData()
+    }, [])
 
     const onChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
         setSearchValue(e.target.value)
@@ -47,15 +70,18 @@ const Email = () => {
         router.push(`/email/email-detail/${emailId}`);
     };
 
+    console.log(data);
+    
+
     return (
         <PortalContainer topbar={<Topbar />}>
             <div className="m-[32px]">
                 <SearchInput searchValue={searchValue} onChange={onChange} placeholder={placeholder} />
             </div>
             <div className="flex flex-col space-y-[20px]">
-                {mockEmails.map((email: EmailProps, index: number) => (
-                    <MailItem 
-                        key={`${email.id}-${email.sender}`} id={email.id} sender={email.sender} title={email.title} email={email.email} onClick={handleButtonClick}                    
+                {data && data.map((email: Array<any>, index: number) => (
+                    <MailItem
+                        key={index} id={index} sender={email[2]} title={email[1]} email={email[3]} onClick={handleButtonClick}
                     />
                 ))}
             </div>
