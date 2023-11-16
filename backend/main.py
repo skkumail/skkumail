@@ -453,21 +453,10 @@ async def show_mail(request: Request, db: Session = Depends(get_db)):
         mailbox.logout()
 
         total_list = []
-        for temp_item in (
-            db.query(models.User_receive_log)
-            .filter(models.User_receive_log.username == username)
-            .all()
-        ):
-            total_list.append(
-                [
-                    temp_item.date,
-                    temp_item.subject,
-                    temp_item.sender,
-                    temp_item.contents,
-                    temp_item.num,
-                ]
-            )
 
+        for temp_item in db.query(models.User_receive_log).filter(models.User_receive_log.username == username).all():
+            total_list.append([temp_item.date, temp_item.subject, temp_item.sender, temp_item.contents, temp_item.num])
+            
         return JSONResponse({"message": "연결 성공", "data": total_list})
 
     except Exception as e:
@@ -488,4 +477,5 @@ async def translate_text(request: Request, db: Session = Depends(get_db)):
         return JSONResponse({"message": "연결 성공", "data": result})
 
     except Exception as e:
-        return JSONResponse({"message": "연결 fail", "data": str(e)})
+        return JSONResponse({'message': '연결 fail', 'data':str(e)})
+
