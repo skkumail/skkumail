@@ -130,10 +130,10 @@ async def extract_keywords(request: Request, db: Session = Depends(get_db)):
 ################################ mail_generation #########################
 def mail_generator(text, prompt, answer, style, name, relation):
     # api_key는 반드시 반드시 업로드하지 말 것!!!
-    f = open("/home/dori/Desktop/DORI/chatgpt_key.txt", "r")
-    line = f.readline().strip()
-    f.close()
-    openai.api_key = line
+    # f = open("/home/dori/Desktop/DORI/chatgpt_key.txt", "r")
+    # line = f.readline().strip()
+    # f.close()
+    openai.api_key = "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"
 
     # 로그 있는 경우 => 로그 기반 few shot learning
     # 로그 없는 경우 => default setting으로 few shot learning
@@ -417,7 +417,7 @@ async def show_mail(request: Request, db: Session = Depends(get_db)):
 
         # test_i = 0
         for msg in mailbox.fetch(limit=False, reverse=False):
-            test_i += 1
+            # test_i += 1
             # if test_i > 100:
             #     break
 
@@ -464,6 +464,7 @@ async def show_mail(request: Request, db: Session = Depends(get_db)):
                     temp_item.subject,
                     temp_item.sender,
                     temp_item.contents,
+                    temp_item.num,
                 ]
             )
 
