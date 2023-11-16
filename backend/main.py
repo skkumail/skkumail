@@ -26,6 +26,11 @@ if FRONTEND_HOST and FRONTEND_PORT:
     new_origin = f"http://{FRONTEND_HOST}:{FRONTEND_PORT}"
     origins.append(new_origin)
 
+# curl -X GET으로 컨테이너 잘 돌아가는지 체크 용도
+if FRONTEND_HOST:
+    health_origin = f"http://{FRONTEND_HOST}:80" 
+    origins.append(new_origin)
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
@@ -479,3 +484,11 @@ async def translate_text(request: Request, db: Session = Depends(get_db)):
     except Exception as e:
         return JSONResponse({'message': '연결 fail', 'data':str(e)})
 
+################################ Health Check ###########################
+@app.get("/health")
+async def health_check():
+    # 컨테이너  환경에서 필요
+    # e.g. sudo docker-compose exec -T frontend curl -X GET http://backend:8000/health
+    # -X GET은 생략 가능, curl 디폴트가 -X GET임
+
+    return {"status": "healthy"}
