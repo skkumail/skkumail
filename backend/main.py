@@ -391,7 +391,7 @@ async def show_mail(request: Request, db: Session=Depends(get_db)):
 
         total_list = []
         for temp_item in db.query(models.User_receive_log).filter(models.User_receive_log.username == username).all():
-            total_list.append([temp_item.date, temp_item.subject, temp_item.sender, temp_item.contents])
+            total_list.append([temp_item.date, temp_item.subject, temp_item.sender, temp_item.contents, temp_item.num])
 
         return JSONResponse({'message': '연결 성공', 'data':total_list})
     
