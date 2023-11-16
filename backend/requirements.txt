@@ -1,7 +1,7 @@
 fastapi==0.104.1
 uvicorn
 keybert==0.8.3
-openai==0.28.0
+openai==1.3.0
 googletrans==4.0.0rc1
 imap_tools
 sqlalchemy
