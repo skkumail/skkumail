@@ -504,7 +504,7 @@ async def incode_keyword(request: Request, db: Session=Depends(get_db)):
     
 
 @app.post("/main_keyword_search")
-async def incode_keyword(request: Request, db: Session=Depends(get_db)):
+async def return_main_keyword_search(request: Request, db: Session=Depends(get_db)):
     try:
         data = await request.json()
 
