@@ -13,6 +13,9 @@ import openai
 from imap_tools import MailBox
 import os
 from googletrans import Translator
+from transformers import BertTokenizer
+import numpy as np
+from sklearn.cluster import KMeans
 
 app = FastAPI()
 
@@ -27,6 +30,11 @@ FRONTEND_HOST = os.environ.get('FRONTEND_HOST')
 FRONTEND_PORT = os.environ.get('FRONTEND_PORT')
 if FRONTEND_HOST and FRONTEND_PORT:
     new_origin = f"http://{FRONTEND_HOST}:{FRONTEND_PORT}"
+    origins.append(new_origin)
+
+# curl -X GET으로 컨테이너 잘 돌아가는지 체크 용도
+if FRONTEND_HOST:
+    health_origin = f"http://{FRONTEND_HOST}:80" 
     origins.append(new_origin)
 
 app.add_middleware(
@@ -72,12 +80,18 @@ class User_receive_log(BaseModel):
     keyword:str = Field(min_length=1)
     em_keyword:str = Field(min_length=1)
     main_keyword:str = Field(min_length=1)
+    main_0:int = Field(gt=-1)
+    main_1:int = Field(gt=-1)
+    main_2:int = Field(gt=-1)
+    main_3:int = Field(gt=-1)
+    main_4:int = Field(gt=-1)
     num:int = Field(gt=0)
 
 
 ########################### Keyword Extract #######################
 # KeyBERT 모델 로딩
 keybert_model = KeyBERT("distilbert-base-nli-mean-tokens")
+tokenizer = BertTokenizer.from_pretrained("bert-base-cased")
 
 @app.post("/extract_keywords")
 async def extract_keywords(request: Request, db: Session=Depends(get_db)):
@@ -367,11 +381,7 @@ async def show_mail(request: Request, db: Session=Depends(get_db)):
         mailbox.login(email_id, email_key, initial_folder="INBOX")
         
 
-        # test_i = 0
         for msg in mailbox.fetch(limit=False, reverse=False):
-            test_i += 1
-            # if test_i > 100:
-            #     break
 
             temp_user_msg = db.query(models.User_receive_log).filter(models.User_receive_log.username == username, models.User_receive_log.sender == msg.from_, models.User_receive_log.date == str(msg.date)).first()
             if temp_user_msg is not None:
@@ -384,14 +394,32 @@ async def show_mail(request: Request, db: Session=Depends(get_db)):
                 temp_receive_mail.subject = msg.subject
                 temp_receive_mail.sender = msg.from_
                 temp_receive_mail.contents = msg.text
-                temp_receive_mail.num = temp_num+1    
+                temp_receive_mail.num = temp_num+1
+                # KeyBERT를 사용하여 키워드 추출
+                keywords = keybert_model.extract_keywords(
+                    msg.text, keyphrase_ngram_range=(1, 1), top_n = 5, stop_words="english"
+                )
+
+                keyword_total_list = []
+                keyword_encoded_total_list = []
+                for i in range(len(keywords)):
+                    keyword_total_list.append(keywords[i][0])
+                    sequence = keywords[i][0]
+                    inputs = tokenizer(sequence)
+                    encoded_sequence = inputs["input_ids"]
+                    temp_sequence = np.array(encoded_sequence)
+                    temp_encoded_sequence = temp_sequence[(temp_sequence != 0) & (temp_sequence != 100) & (temp_sequence != 101) & (temp_sequence != 102) & (temp_sequence != 103)].tolist()
+                    keyword_encoded_total_list += temp_encoded_sequence
+
+                temp_receive_mail.keyword = str(keyword_total_list)
+                temp_receive_mail.em_keyword = str(keyword_encoded_total_list)
                 db.add(temp_receive_mail)
                 db.commit()
         mailbox.logout()
 
         total_list = []
         for temp_item in db.query(models.User_receive_log).filter(models.User_receive_log.username == username).all():
-            total_list.append([temp_item.date, temp_item.subject, temp_item.sender, temp_item.contents, temp_item.num])
+            total_list.append([temp_item.date, temp_item.subject, temp_item.sender, temp_item.contents])
 
         return JSONResponse({'message': '연결 성공', 'data':total_list})
     
@@ -416,3 +444,90 @@ async def translate_text(request: Request, db: Session=Depends(get_db)):
     
     except Exception as e:
         return JSONResponse({'message': '연결 fail', 'data':str(e)})
+
+
+################################ Tokenizer ###########################
+@app.post("/main_keyword")
+async def incode_keyword(request: Request, db: Session=Depends(get_db)):
+    try:
+        data = await request.json()
+
+        username = data.get('username')
+        
+        temp_user_msg = db.query(models.User_receive_log).filter(models.User_receive_log.username == username).all()
+        
+        total_list = []
+        for i in temp_user_msg:
+            total_list+=eval(i.em_keyword)
+        
+        X = np.array(total_list).reshape(-1,1)
+        kmeans = KMeans(n_clusters=5, n_init="auto", init='k-means++').fit(X)
+        label_list = kmeans.labels_.tolist()
+        class_center = [str(tokenizer.decode(round(em_center))) for em_center in kmeans.cluster_centers_.reshape(-1)]
+
+        for temp_user_msg_i in temp_user_msg:
+            temp_num = len(eval(temp_user_msg_i.em_keyword))
+            temp_user_msg_i.main_keyword = str(class_center)
+            temp_class = []
+            for i in range(temp_num):
+                temp_class.append(label_list.pop(0))
+
+            set_temp_class = list(set(temp_class))
+            if 0 in set_temp_class:
+                temp_user_msg_i.main_0 = 1
+            else:
+                temp_user_msg_i.main_0 = 0
+            if 1 in set_temp_class:
+                temp_user_msg_i.main_1 = 1
+            else:
+                temp_user_msg_i.main_1 = 0
+            if 2 in set_temp_class:
+                temp_user_msg_i.main_2 = 1
+            else:
+                temp_user_msg_i.main_2 = 0
+            if 3 in set_temp_class:
+                temp_user_msg_i.main_3 = 1
+            else:
+                temp_user_msg_i.main_3 = 0
+            if 4 in set_temp_class:
+                temp_user_msg_i.main_4 = 1
+            else:
+                temp_user_msg_i.main_4 = 0
+            
+            db.add(temp_user_msg_i)
+            db.commit()
+
+        return JSONResponse({'message': '연결 성공', 'data':class_center})
+    
+    except Exception as e:
+        return JSONResponse({'message': '연결 fail', 'data':str(e)})
+    
+
+@app.post("/main_keyword_search")
+async def incode_keyword(request: Request, db: Session=Depends(get_db)):
+    try:
+        data = await request.json()
+
+        username = data.get('username')
+        keyword_num = data.get('keyword_num')
+        
+        temp_user_msg = db.query(models.User_receive_log).filter(models.User_receive_log.username == username, eval(f"models.User_receive_log.main_{keyword_num}")==1).all()
+        
+        total_list = []
+        for temp_item in temp_user_msg:
+            total_list.append([temp_item.date, temp_item.subject, temp_item.sender, temp_item.contents])
+
+        return JSONResponse({'message': '연결 성공', 'data':total_list})
+    
+    except Exception as e:
+        return JSONResponse({'message': '연결 fail', 'data':str(e)})
+    
+
+
+@app.get("/health")
+async def health_check():
+    # 컨테이너  환경에서 필요
+    # e.g. sudo docker-compose exec -T frontend curl -X GET http://backend:8000/health
+    # -X GET은 생략 가능, curl 디폴트가 -X GET임
+
+    return {"status": "healthy"}
