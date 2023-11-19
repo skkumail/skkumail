@@ -11,6 +11,7 @@ import Popup from "@/components/popup/Popup"
 // export BACKEND_HOST=127.0.0.1, 
 // export BACKEND_PORT=8000 하고 쓰세요
 import { baseURL } from "@/pages/api/axiosConfig"
+import { useUser } from "@/modules/userContext"
 
 interface KeywordItemProps {
     keyword: string
@@ -27,6 +28,7 @@ const KeywordItem = ({ keyword }: KeywordItemProps) => {
 const EmailDetail = () => {
     // emailId 를 param 으로 받도록
     const router = useRouter()
+    const { user } = useUser()
     const emailId = router.query?.emailId
         ? typeof router.query.emailId === 'string'
             ? parseInt(router.query.emailId, 10)
@@ -44,7 +46,7 @@ const EmailDetail = () => {
     const fetchData = async () => {
         try {
             const response = await api.post('/showmail', {
-                username: 'slim'
+                username: user?.username
             });
 
             console.log(response);
