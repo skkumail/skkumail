@@ -5,6 +5,7 @@ import { useEffect, useState } from "react"
 import { mockEmails, EmailProps } from "../../data/mockData"
 import { useRouter } from "next/router"
 import axios from "axios"
+import { useUser } from "@/modules/userContext"
 
 interface MailItemProps {
     id: number
@@ -35,6 +36,7 @@ const MailItem = ({ id, sender, title, email, onClick }: MailItemProps) => {
 const Email = () => {
     const [data, setData] = useState([])
     const [searchValue, setSearchValue] = useState('')
+    const { user } = useUser()
 
     const api = axios.create({
         baseURL: `${process.env.NEXT_PUBLIC_BACKEND_HOST}:${process.env.NEXT_PUBLIC_BACKEND_PORT}`  // 백엔드 서버의 주소와 포트를 baseURL로 설정
@@ -43,7 +45,7 @@ const Email = () => {
     const fetchData = async () => {
           try {
             const response = await api.post('/showmail', {
-              username : 'slim'
+              username : user?.username
             });
 
             console.log(response);

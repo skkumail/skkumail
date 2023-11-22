@@ -9,9 +9,11 @@ import { baseURL } from "../api/axiosConfig";
 import PortalContainer from "@/components/container/Container";
 import Textarea from "@/components/textarea/Textarea";
 import Input from "@/components/input/Input";
+import { useUser } from "@/modules/userContext";
 
 const LoginPage = () => {
   const router = useRouter();
+  const { login } = useUser()
   const [id, setId] = useState("");
 
   const [password, setPassword] = useState("");
@@ -28,6 +30,7 @@ const LoginPage = () => {
       });
       
       console.log(response);
+      login(id) // user context 저장
       alert('로그인 되었습니다.')
       router.push('/email')
     } catch (error) {

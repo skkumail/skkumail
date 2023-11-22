@@ -3,6 +3,7 @@ import Button from "@/components/button/Button";
 import PortalContainer from "@/components/container/Container";
 import Popup from "@/components/popup/Popup";
 import Textarea from "@/components/textarea/Textarea";
+import { useUser } from "@/modules/userContext";
 import axios from "axios";
 import { useRouter } from "next/router";
 import { useState } from "react";
@@ -19,6 +20,7 @@ const WriteHome = () => {
   // GPT API 부르고 그 결과 값을 바탕으로 팝업 띄우기
   const [isPopup, setIsPopup] = useState<boolean>(false)
   const [generatedEmail, setGeneratedEmail] = useState('')
+  const { user } = useUser()
 
   const api = axios.create({
     baseURL: `${process.env.NEXT_PUBLIC_BACKEND_HOST}:${process.env.NEXT_PUBLIC_BACKEND_PORT}`  // 백엔드 서버의 주소와 포트를 baseURL로 설정
@@ -27,7 +29,7 @@ const WriteHome = () => {
     // GPT API call 
     try {
       const response = await api.post('/chatgpt', {
-        username: "soo", // test user name
+        username: user?.username, // test user name
         send_address: email,
         contents: content,
         style: style,

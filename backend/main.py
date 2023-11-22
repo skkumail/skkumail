@@ -28,7 +28,7 @@ if FRONTEND_HOST and FRONTEND_PORT:
 
 # curl -X GET으로 컨테이너 잘 돌아가는지 체크 용도
 if FRONTEND_HOST:
-    health_origin = f"http://{FRONTEND_HOST}:80" 
+    health_origin = f"http://{FRONTEND_HOST}:80"
     origins.append(new_origin)
 
 app.add_middleware(
@@ -346,6 +346,7 @@ async def login(request: Request, db: Session = Depends(get_db)):
         .filter(models.User_info.username == username, models.User_info.pw == password)
         .first()
     )
+    print(temp_user_info)
     if temp_user_info is not None:
         return JSONResponse({"message": "로그인이 완료되었습니다.", "data": username})
     else:
@@ -421,6 +422,7 @@ async def show_mail(request: Request, db: Session = Depends(get_db)):
             .filter(models.User_info.username == username)
             .first()
         )
+        print(temp_user.email_key)
         email_id = temp_user.email_id
         email_key = temp_user.email_key
 
@@ -466,9 +468,21 @@ async def show_mail(request: Request, db: Session = Depends(get_db)):
 
         total_list = []
 
-        for temp_item in db.query(models.User_receive_log).filter(models.User_receive_log.username == username).all():
-            total_list.append([temp_item.date, temp_item.subject, temp_item.sender, temp_item.contents, temp_item.num])
-            
+        for temp_item in (
+            db.query(models.User_receive_log)
+            .filter(models.User_receive_log.username == username)
+            .all()
+        ):
+            total_list.append(
+                [
+                    temp_item.date,
+                    temp_item.subject,
+                    temp_item.sender,
+                    temp_item.contents,
+                    temp_item.num,
+                ]
+            )
+
         return JSONResponse({"message": "연결 성공", "data": total_list})
 
     except Exception as e:
@@ -489,7 +503,8 @@ async def translate_text(request: Request, db: Session = Depends(get_db)):
         return JSONResponse({"message": "연결 성공", "data": result})
 
     except Exception as e:
-        return JSONResponse({'message': '연결 fail', 'data':str(e)})
+        return JSONResponse({"message": "연결 fail", "data": str(e)})
+
 
 ################################ Health Check ###########################
 @app.get("/health")
