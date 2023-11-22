@@ -31,7 +31,7 @@ if FRONTEND_HOST and FRONTEND_PORT:
 
 # curl -X GET으로 컨테이너 잘 돌아가는지 체크 용도
 if FRONTEND_HOST:
-    health_origin = f"http://{FRONTEND_HOST}:80" 
+    health_origin = f"http://{FRONTEND_HOST}:80"
     origins.append(new_origin)
 
 app.add_middleware(
@@ -53,6 +53,19 @@ def get_db():
     finally:
         db.close()
 
+        
+def get_api_key() -> str:
+    IS_PROD = os.environ.get("IS_PROD", False)
+    if not IS_PROD:
+        try:
+            with open("/home/dori/Desktop/DORI/chatgpt_key.txt", "r") as f:
+                OPENAI_API_KEY = f.readline().strip()
+        except FileNotFoundError:
+            OPENAI_API_KEY = "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"
+    else:
+        OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY", "")
+    return OPENAI_API_KEY
+  
 class User_info(BaseModel):  
     username:str = Field(min_length=1)
     pw:str = Field(min_length=1)
@@ -146,7 +159,7 @@ def mail_generator(text, prompt, answer, style, name, relation):
     # f = open("/home/dori/Desktop/DORI/chatgpt_key.txt", "r")
     # line = f.readline().strip()
     # f.close()
-    openai.api_key = "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"
+    openai.api_key = get_api_key()
 
     # 로그 있는 경우 => 로그 기반 few shot learning
     # 로그 없는 경우 => default setting으로 few shot learning
@@ -343,6 +356,7 @@ async def login(request: Request, db: Session = Depends(get_db)):
         .filter(models.User_info.username == username, models.User_info.pw == password)
         .first()
     )
+    print(temp_user_info)
     if temp_user_info is not None:
         return JSONResponse({"message": "로그인이 완료되었습니다.", "data": username})
     else:
@@ -351,11 +365,7 @@ async def login(request: Request, db: Session = Depends(get_db)):
 
 ################################# Summary ############################
 def mail_summary(text):
-    # api_key는 반드시 반드시 업로드하지 말 것!!!
-    f = open("/home/dori/Desktop/DORI/chatgpt_key.txt", "r")
-    line = f.readline().strip()
-    f.close()
-    openai.api_key = line
+    openai.api_key = get_api_key() 
 
     # 로그 있는 경우 => 로그 기반 few shot learning
     # 로그 없는 경우 => default setting으로 few shot learning
@@ -422,6 +432,7 @@ async def show_mail(request: Request, db: Session = Depends(get_db)):
             .filter(models.User_info.username == username)
             .first()
         )
+        print(temp_user.email_key)
         email_id = temp_user.email_id
         email_key = temp_user.email_key
 
@@ -483,9 +494,21 @@ async def show_mail(request: Request, db: Session = Depends(get_db)):
 
         total_list = []
 
-        for temp_item in db.query(models.User_receive_log).filter(models.User_receive_log.username == username).all():
-            total_list.append([temp_item.date, temp_item.subject, temp_item.sender, temp_item.contents, temp_item.num])
-            
+        for temp_item in (
+            db.query(models.User_receive_log)
+            .filter(models.User_receive_log.username == username)
+            .all()
+        ):
+            total_list.append(
+                [
+                    temp_item.date,
+                    temp_item.subject,
+                    temp_item.sender,
+                    temp_item.contents,
+                    temp_item.num,
+                ]
+            )
+
         return JSONResponse({"message": "연결 성공", "data": total_list})
 
 
@@ -507,7 +530,8 @@ async def translate_text(request: Request, db: Session = Depends(get_db)):
         return JSONResponse({"message": "연결 성공", "data": result})
 
     except Exception as e:
-        return JSONResponse({'message': '연결 fail', 'data':str(e)})
+        return JSONResponse({"message": "연결 fail", "data": str(e)})
+
 
 ################################ Tokenizer ###########################
 @app.post("/main_keyword")
