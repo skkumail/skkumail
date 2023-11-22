@@ -50,6 +50,17 @@ def get_db():
     finally:
         db.close()
 
+def get_api_key() -> str:
+    IS_PROD = os.environ.get("IS_PROD", False)
+    if not IS_PROD:
+        try:
+            with open("/home/dori/Desktop/DORI/chatgpt_key.txt", "r") as f:
+                OPENAI_API_KEY = f.readline().strip()
+        except FileNotFoundError:
+            OPENAI_API_KEY = "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"
+    else:
+        OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY", "")
+    return OPENAI_API_KEY
 
 class User_info(BaseModel):
     username: str = Field(min_length=1)
@@ -138,7 +149,7 @@ def mail_generator(text, prompt, answer, style, name, relation):
     # f = open("/home/dori/Desktop/DORI/chatgpt_key.txt", "r")
     # line = f.readline().strip()
     # f.close()
-    openai.api_key = "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"
+    openai.api_key = get_api_key()
 
     # 로그 있는 경우 => 로그 기반 few shot learning
     # 로그 없는 경우 => default setting으로 few shot learning
@@ -343,11 +354,7 @@ async def login(request: Request, db: Session = Depends(get_db)):
 
 ################################# Summary ############################
 def mail_summary(text):
-    # api_key는 반드시 반드시 업로드하지 말 것!!!
-    f = open("/home/dori/Desktop/DORI/chatgpt_key.txt", "r")
-    line = f.readline().strip()
-    f.close()
-    openai.api_key = line
+    openai.api_key = get_api_key() 
 
     # 로그 있는 경우 => 로그 기반 few shot learning
     # 로그 없는 경우 => default setting으로 few shot learning
@@ -492,3 +499,4 @@ async def health_check():
     # -X GET은 생략 가능, curl 디폴트가 -X GET임
 
     return {"status": "healthy"}
+
