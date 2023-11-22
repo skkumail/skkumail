@@ -32,6 +32,11 @@ class User_receive_log(Base):
     keyword = Column(String)
     em_keyword = Column(String)
     main_keyword = Column(String)
+    main_0 = Column(Integer)
+    main_1 = Column(Integer)
+    main_2 = Column(Integer)
+    main_3 = Column(Integer)
+    main_4 = Column(Integer)
     num = Column(Integer)
 
 
