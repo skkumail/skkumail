@@ -5,13 +5,17 @@ services:
     build:
       context: frontend/
     environment:
-      - VIRTUAL_HOST=${VIRTUAL_HOST}
-      - LETSENCRYPT_HOST=${LETSENCRYPT_HOST}
+      - VIRTUAL_HOST=${FRONTEND_VIRTUAL_HOST}
+      - LETSENCRYPT_HOST=${FRONTEND_LETSENCRYPT_HOST}
       - LETSENCRYPT_EMAIL=${LETSENCRYPT_EMAIL}
+
       - FRONTEND_PORT=${FRONTEND_PORT}
       - FRONTEND_HOST=${FRONTEND_HOST}
       - BACKEND_PORT=${BACKEND_PORT}
       - BACKEND_HOST=${BACKEND_HOST}
+      - NEXT_PUBLIC_BACKEND_HOST=${NEXT_PUBLIC_BACKEND_HOST}
+      - NEXT_PUBLIC_BACKEND_PORT=${NEXT_PUBLIC_BACKEND_PORT}
+      
     ports:
       - ${FRONTEND_PORT}:${FRONTEND_PORT}
 
@@ -21,6 +25,9 @@ services:
     ports:
       - ${BACKEND_PORT}:${BACKEND_PORT}
     environment:
+      - VIRTUAL_HOST=${BACKEND_VIRTUAL_HOST}
+      - LETSENCRYPT_HOST=${BACKEND_LETSENCRYPT_HOST}
+      - LETSENCRYPT_EMAIL=${LETSENCRYPT_EMAIL}
       - FRONTEND_PORT=${FRONTEND_PORT}
       - FRONTEND_HOST=${FRONTEND_HOST}
       - BACKEND_PORT=${BACKEND_PORT}
@@ -34,9 +41,9 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - /etc/nginx/certs
-      - /etc/nginx/vhost.d
-      - /usr/share/nginx/html
+      - volume-nginx-certs:/etc/nginx/certs
+      - volume-nginx-vhost:/etc/nginx/vhost.d
+      - volume-nginx-root:/usr/share/nginx/html
       - /var/run/docker.sock:/tmp/docker.sock:ro
 
   nginx-letsencrypt:
@@ -48,3 +55,8 @@ services:
       - nginx-proxy
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
+
+volumes:
+  volume-nginx-certs:
+  volume-nginx-vhost:
+  volume-nginx-root:
