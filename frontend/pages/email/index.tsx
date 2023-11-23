@@ -81,10 +81,9 @@ const Email = () => {
                 <SearchInput searchValue={searchValue} onChange={onChange} placeholder={placeholder} />
             </div>
             <div className="flex flex-col space-y-[20px]">
-                {data && data.map((email: Array<any>, index: number) => (
-                    <MailItem
-                        key={index} id={index} sender={email[2]} title={email[1]} email={email[3]} onClick={handleButtonClick}
-                    />
+                {Array.isArray(data) && data.map((email, index) => (
+                        <MailItem key={index} id={index} sender={email[2]} title={email[1]} email={email[3]} onClick={handleButtonClick}/>
+                    ))}
                 ))}
             </div>
         </PortalContainer>
