@@ -38,6 +38,9 @@ const Email = () => {
     const [searchValue, setSearchValue] = useState('')
     const { user } = useUser()
 
+    console.log(user);
+    
+
     const api = axios.create({
         baseURL: `${process.env.NEXT_PUBLIC_BACKEND_HOST}:${process.env.NEXT_PUBLIC_BACKEND_PORT}`  // 백엔드 서버의 주소와 포트를 baseURL로 설정
     });
@@ -45,7 +48,7 @@ const Email = () => {
     const fetchData = async () => {
           try {
             const response = await api.post('/showmail', {
-              username : user?.username
+              username : user && user.username
             });
 
             console.log(response);
@@ -57,8 +60,12 @@ const Email = () => {
     }
 
     useEffect(() => {
-        fetchData()
-    }, [])
+        const fetchDataAsync = async () => {
+          await fetchData();
+        };
+      
+        fetchDataAsync();
+      }, [user]);
 
     const onChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
         setSearchValue(e.target.value)
@@ -69,7 +76,7 @@ const Email = () => {
     const router = useRouter()
     const handleButtonClick = (emailId: number) => {
         // Use router.push to navigate to the desired page
-        router.push(`/email/email-detail/${emailId}`);
+        router.push(`/email/email-detail?emailId=${emailId}`);
     };
 
     console.log(data);
@@ -84,7 +91,7 @@ const Email = () => {
                 {Array.isArray(data) && data.map((email, index) => (
                         <MailItem key={index} id={index} sender={email[2]} title={email[1]} email={email[3]} onClick={handleButtonClick}/>
                     ))}
-                ))}
+                
             </div>
         </PortalContainer>
     )
