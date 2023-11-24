@@ -16,6 +16,7 @@ from googletrans import Translator
 from transformers import BertTokenizer
 import numpy as np
 from sklearn.cluster import KMeans
+import api_schema
 
 app = FastAPI()
 
@@ -53,40 +54,13 @@ def get_db():
     finally:
         db.close()
 
+def get_api_key():
+    api_key = os.getenv('OPENAI_API_KEY')
+    if not api_key:
+        raise ValueError("API Key not found in environment variables.")
+    return api_key
 
-class User_info(BaseModel):
-    username: str = Field(min_length=1)
-    pw: str = Field(min_length=1)
-    email_id: str = Field(min_length=1)
-    email_key: str = Field(min_length=1)
-
-
-class User_send_log(BaseModel):
-    username: str = Field(min_length=1)
-    receiver: str = Field(min_length=1)
-    prompt: str = Field(min_length=1)
-    result: str = Field(min_length=1)
-    num: int = Field(gt=0)
-
-
-class User_receive_log(BaseModel):
-    username: str = Field(min_length=1)
-    date: str = Field(min_length=1)
-    subject: str = Field(min_length=1)
-    sender: str = Field(min_length=1)
-    contents: str = Field(min_length=1)
-    summary: str = Field(min_length=1)
-    keyword: str = Field(min_length=1)
-    em_keyword: str = Field(min_length=1)
-    main_keyword: str = Field(min_length=1)
-    main_0: int = Field(gt=-1)
-    main_1: int = Field(gt=-1)
-    main_2: int = Field(gt=-1)
-    main_3: int = Field(gt=-1)
-    main_4: int = Field(gt=-1)
-    num: int = Field(gt=0)
-
-
+openai.api_key = get_api_key()
 ########################### Keyword Extract #######################
 # KeyBERT 모델 로딩
 keybert_model = KeyBERT("distilbert-base-nli-mean-tokens")
@@ -94,23 +68,13 @@ tokenizer = BertTokenizer.from_pretrained("bert-base-cased")
 
 
 @app.post("/extract_keywords")
-async def extract_keywords(request: Request, db: Session = Depends(get_db)):
+
+async def extract_keywords(request: api_schema.KeywordExtractionRequest , db: Session=Depends(get_db)):
     try:
-        # JSON 데이터를 추출
-        data = await request.json()
-        username = data.get("username")
-        sender = data.get("sender")
-        num = data.get("num")
-        print(username)
-        temp_user_msg = (
-            db.query(models.User_receive_log)
-            .filter(
-                models.User_receive_log.username == username,
-                models.User_receive_log.sender == sender,
-                models.User_receive_log.num == int(num),
-            )
-            .first()
-        )
+        username = request.username
+        sender = request.sender
+        num = request.num
+        temp_user_msg = db.query(models.User_receive_log).filter(models.User_receive_log.username == username, models.User_receive_log.sender == sender, models.User_receive_log.num == int(num)).first()
 
         if temp_user_msg.keyword is not None:
             total_list = eval(temp_user_msg.keyword)
@@ -143,12 +107,11 @@ async def extract_keywords(request: Request, db: Session = Depends(get_db)):
 
 
 ################################ mail_generation #########################
+
+def get_mail_generator_prompt(name:str, relation:str, style:str, text:str)->str:
+    return f"Please consider all the following details when writing a business email. The recipient's name is {name}, and our relationship is {relation}. The email should be readable and written in a {style} tone. While keeping in mind the considerations mentioned earlier, please make sure to include all of the following content in the email.\n{text}"
+
 def mail_generator(text, prompt, answer, style, name, relation):
-    # api_key는 반드시 반드시 업로드하지 말 것!!!
-    f = open("/home/dori/Desktop/DORI/chatgpt_key.txt", "r")
-    line = f.readline().strip()
-    f.close()
-    openai.api_key = line
 
     # 로그 있는 경우 => 로그 기반 few shot learning
     # 로그 없는 경우 => default setting으로 few shot learning
@@ -159,16 +122,15 @@ def mail_generator(text, prompt, answer, style, name, relation):
             completion = openai.ChatCompletion.create(
                 model="gpt-3.5-turbo",
                 messages=[
-                    {"role": "user", "content": prompt},
-                    {"role": "assistant", "content": answer},
-                    {
-                        "role": "user",
-                        "content": f"아래 내용을 모두 고려하여 비즈니스 메일을 작성해줘. 상대 이름은 {name}으로 나와는 {relation}이라는 관계야. 메일을 작성할 때는 가독성이 있어야 하며, {style}한 분위기로 작성해야 해. 앞에서 말한 고려사항들을 생각하면서 동시에 반드시 아래 내용을 모두 포함하여 메일을 작성해줘.\n{text}",
-                    },
-                ],
-            )
 
-            return completion.choices[0].message["content"].strip()
+                    {'role': 'user', 'content': prompt},
+                    {'role': 'assistant', 'content': answer},
+                    {'role': 'user', 'content': get_mail_generator_prompt(name=name, relation=relation, style=style, text=text)}
+                    ]
+                )
+        
+            return completion.choices[0].message['content'].strip()
+
         except Exception as e:
             print(e)
             return "error"
@@ -185,38 +147,31 @@ def mail_generator(text, prompt, answer, style, name, relation):
             completion = openai.ChatCompletion.create(
                 model="gpt-3.5-turbo",
                 messages=[
-                    {
-                        "role": "user",
-                        "content": f"아래 내용을 모두 고려하여 비즈니스 메일을 작성해줘. 상대 이름은 {name}으로 나와는 {relation}이라는 관계야. 메일을 작성할 때는 가독성이 있어야 하며, {style}한 분위기로 작성해야 해. 앞에서 말한 고려사항들을 생각하면서 동시에 반드시 아래 내용을 모두 포함하여 메일을 작성해줘.\n{text}",
-                    }
-                ],
-            )
-            return completion.choices[0].message["content"].strip()
+
+                    {'role': 'user', 'content': get_mail_generator_prompt(name=name, relation=relation, style=style, text=text)}
+                    ]
+                )
+            return completion.choices[0].message['content'].strip()
+
         except Exception as e:
             return "error"
 
 
 # 메일 작성 부분 - with ChatGPT
 @app.post("/chatgpt")
-async def chatgpt_mail_generate(request: Request, db: Session = Depends(get_db)):
-    try:
-        data = await request.json()
-        contents = data.get("contents")
-        # 동일한 상대에게 보냈던 메일로 few shot learning -> 그냥 동일한 카테고리(이건 어찌 분류?) 정도로 해도 괜찮을 듯...
-        username = data.get("username")
-        sendaddr = data.get("send_address")
-        style = data.get("style")
-        name = data.get("name")
-        relation = data.get("relation")
 
-        pre_contents = (
-            db.query(models.User_send_log)
-            .filter(
-                models.User_send_log.username == username,
-                models.User_send_log.receiver == sendaddr,
-            )
-            .all()
-        )
+async def chatgpt_mail_generate(request: api_schema.ChatGPTMailRequest, db: Session=Depends(get_db)):
+    try:
+        contents = request.contents
+        # 동일한 상대에게 보냈던 메일로 few shot learning -> 그냥 동일한 카테고리(이건 어찌 분류?) 정도로 해도 괜찮을 듯...
+        username = request.username
+        sendaddr = request.send_address
+        style = request.style
+        name = request.name
+        relation = request.relation
+
+        pre_contents = db.query(models.User_send_log).filter(models.User_send_log.username==username, models.User_send_log.receiver==sendaddr).all()
+
 
         if len(pre_contents) == 0:
             chatgpt_infer = mail_generator(contents, None, None, style, name, relation)
@@ -240,20 +195,17 @@ async def chatgpt_mail_generate(request: Request, db: Session = Depends(get_db))
 
 ############################## send email #######################
 @app.post("/sendmail")
-async def send_email(request: Request, db: Session = Depends(get_db)):
-    try:
-        data = await request.json()
-        username = data.get("username")
-        head = data.get("head")
-        text = data.get("text")
-        address = data.get("address")
-        prompt = data.get("prompt")
 
-        temp_user = (
-            db.query(models.User_info)
-            .filter(models.User_info.username == username)
-            .first()
-        )
+async def send_email(request: api_schema.SendMailRequest, db: Session=Depends(get_db)):
+    try:
+        username = request.username
+        head = request.head
+        text = request.text
+        address = request.address
+        prompt = request.prompt
+
+        temp_user=db.query(models.User_info).filter(models.User_info.username==username).first()    
+
         email_id = temp_user.email_id
         password = temp_user.email_key
 
@@ -352,12 +304,11 @@ async def login(request: Request, db: Session = Depends(get_db)):
 
 
 ################################# Summary ############################
+
+def get_mail_summary_prompt(text:str)->str:
+    return f"Summarize the email below with a key focus and summarize it easily at a glance. At this time, make sure you don't miss the necessary date and core, and write the sentences in a modified format so that they aren't long and summarize them.\n{text}"
+
 def mail_summary(text):
-    # api_key는 반드시 반드시 업로드하지 말 것!!!
-    f = open("/home/dori/Desktop/DORI/chatgpt_key.txt", "r")
-    line = f.readline().strip()
-    f.close()
-    openai.api_key = line
 
     # 로그 있는 경우 => 로그 기반 few shot learning
     # 로그 없는 경우 => default setting으로 few shot learning
@@ -366,13 +317,10 @@ def mail_summary(text):
         completion = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
             messages=[
-                {
-                    "role": "user",
-                    "content": f"Summarize the email below with a key focus and summarize it easily at a glance. At this time, make sure you don't miss the necessary date and core, and write the sentences in a modified format so that they aren't long and summarize them.\n{text}",
-                }
-            ],
-        )
-        return completion.choices[0].message["content"].strip()
+                {'role': 'user', 'content': get_mail_summary_prompt(text=text)}
+                ]
+            )
+        return completion.choices[0].message['content'].strip()
     except Exception as e:
         return "error"
 
