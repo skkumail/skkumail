@@ -4,6 +4,7 @@ services:
   frontend:
     build:
       context: frontend/
+    container_name: frontend
     environment:
       - VIRTUAL_HOST=${FRONTEND_VIRTUAL_HOST}
       - LETSENCRYPT_HOST=${FRONTEND_LETSENCRYPT_HOST}
@@ -22,6 +23,7 @@ services:
   backend:
     build:
       context: backend/
+    container_name: backend
     ports:
       - ${BACKEND_PORT}:${BACKEND_PORT}
     environment:
