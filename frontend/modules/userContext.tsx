@@ -1,26 +1,40 @@
-import React, { createContext, useContext, useState, ReactNode, FC } from 'react';
+import React from 'react';
+import { createContext, FC, ReactNode, useState, useEffect } from 'react';
 
-type User = {
+interface User {
   username: string;
-};
+}
 
-type UserContextProps = {
+interface UserContextProps {
   user: User | null;
   login: (username: string) => void;
   logout: () => void;
-};
+}
 
 const UserContext = createContext<UserContextProps | undefined>(undefined);
 
 export const UserProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
 
+  useEffect(() => {
+    // 세션 스토리지에서 사용자 정보를 가져옴
+    const storedUser = sessionStorage.getItem('user');
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+  }, []);
+
   const login = (username: string) => {
-    setUser({ username });
+    const newUser = { username };
+    setUser(newUser);
+    // 세션 스토리지에 사용자 정보 저장
+    sessionStorage.setItem('user', JSON.stringify(newUser));
   };
 
   const logout = () => {
     setUser(null);
+    // 세션 스토리지에서 사용자 정보 제거
+    sessionStorage.removeItem('user');
   };
 
   return (
@@ -31,7 +45,7 @@ export const UserProvider: FC<{ children: ReactNode }> = ({ children }) => {
 };
 
 export const useUser = () => {
-  const context = useContext(UserContext);
+  const context = React.useContext(UserContext);
   if (!context) {
     throw new Error('useUser must be used within a UserProvider');
   }

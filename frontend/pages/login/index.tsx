@@ -22,20 +22,22 @@ const LoginPage = () => {
     baseURL: `${process.env.NEXT_PUBLIC_BACKEND_HOST}:${process.env.NEXT_PUBLIC_BACKEND_PORT}`  // 백엔드 서버의 주소와 포트를 baseURL로 설정
   });
 
-  const onClickLogin = async() => {
+  const onClickLogin = async () => {
     try {
       const response = await api.post('/login', {
-        username : id,
-        password : password
+        username: id,
+        password: password
       });
-      
+
       console.log(response);
-      login(id) // user context 저장
-      alert('로그인 되었습니다.')
-      router.push('/email')
+      if (response.data.status_code !== 422) {
+        login(id) // user context 저장
+        alert('로그인 되었습니다.')
+        router.push('/email')
+      }
     } catch (error) {
       alert('실패!');
-    } 
+    }
   };
 
   const onClickSignUp = () => {

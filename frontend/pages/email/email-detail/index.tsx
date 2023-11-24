@@ -29,11 +29,20 @@ const EmailDetail = () => {
     // emailId 를 param 으로 받도록
     const router = useRouter()
     const { user } = useUser()
-    const emailId = router.query?.emailId
-        ? typeof router.query.emailId === 'string'
-            ? parseInt(router.query.emailId, 10)
-            : 0
-        : 1
+    const [emailId, setEmailId] = useState(0)
+    useEffect(() => {
+        // emailId 쿼리 파라미터 가져오기
+
+        const query_id = router.query?.emailId
+            ? typeof router.query.emailId === 'string'
+                ? parseInt(router.query.emailId, 10)
+                : 0
+            : 1
+        console.log(query_id);
+
+        setEmailId(query_id)
+        // 여기서 emailId를 이용한 추가적인 로직을 수행할 수 있습니다.
+    }, [router.query.emailId]);
 
     // To-do: API 로 받아야 함
     const [data, setData] = useState([])
@@ -46,7 +55,7 @@ const EmailDetail = () => {
     const fetchData = async () => {
         try {
             const response = await api.post('/showmail', {
-                username: user?.username
+                username: user && user.username
             });
 
             console.log(response);
@@ -58,36 +67,74 @@ const EmailDetail = () => {
     }
 
     useEffect(() => {
-        fetchData()
-    }, [])
+        const fetchDataAsync = async () => {
+            await fetchData();
+        };
+
+        fetchDataAsync();
+    }, [user]);
 
 
     const [myEmail, setMyEmail] = useState<string[]>([])
 
     useEffect(() => {
-        if (data) {
+        if (Array.isArray(data)) {
             const foundItem = data.find((_item, idx) => idx === emailId);
             setMyEmail(foundItem ?? []);
+            console.log(data);
         }
-    }, [data])
+    }, [data, emailId]);
 
-    // 키워드 추출 관련
+    // 기능
     const [keywords, setKeywords] = useState([])
+    const [translated, setTranslated] = useState("")
+    const [summary, setSummary] = useState("")
 
-    // const handleKeywordExtractBtn = async (content: string) => {
-    //     const payload = {
-    //         email_text: content
-    //     }
-    //     const response = await axios.post(`/extract_keywords`, payload)
+    const handleKeywordExtractBtn = async () => {
+        try {
+            const response = await api.post('/extract_keywords', {
+                username: user?.username,
+                sender: myEmail && myEmail[2],
+                num: myEmail && myEmail[4]
+            });
 
-    //     if (response.status == 200) {
-    //         setKeywords(response.data.keywords)
-    //     }
-    // }
+            console.log(response);
+            setKeywords(response.data.data)
+        } catch (error) {
+            alert('실패!');
+        }
+    };
 
-    // useEffect(() => {
-    //     handleKeywordExtractBtn(content)
-    // }, [content])
+    const handleSummarizeBtn = async () => {
+        try {
+            const response = await api.post('/summarize', {
+                username: user?.username,
+                sender: myEmail && myEmail[2],
+                num: myEmail && myEmail[4]
+            });
+
+            console.log(response);
+            setSummary(response.data.data)
+        } catch (error) {
+            alert('실패!');
+        }
+    };
+
+    const handleTranslateBtn = async () => {
+        try {
+            const response = await api.post('/translate', {
+                contents: myEmail && myEmail[3]
+            });
+
+            console.log(response);
+
+            if (response.data.message === "연결 성공") {
+                setTranslated(response.data.data)
+            }
+        } catch (error) {
+            alert('실패!');
+        }
+    };
 
     // popup 관련 (키워드 추출)
     const [isPopupOpen, setPopupOpen] = useState(false);
@@ -111,9 +158,17 @@ const EmailDetail = () => {
         setSumPopupOpen(false);
     };
 
+    const [isTPopupOpen, setTPopupOpen] = useState(false);
+    const openTPopup = () => {
+        setTPopupOpen(true);
+    };
+
+    const closeTPopup = () => {
+        setTPopupOpen(false);
+    };
+
     const content = myEmail && myEmail[3] ? myEmail[3] : '';
     const htmlContent = `${content ? content.replace(/\n/g, '<br />') : ''}`;
-
 
     return (
         <PortalContainer topbar={<Topbar />}>
@@ -143,15 +198,24 @@ const EmailDetail = () => {
                             <div className="flex px-[32px] justify-end space-x-[10px]">
                                 <Button className='rounded-[7px] py-[12px] px-[28px] border-[2px] border-green-500 bg-green-500'
                                     onClick={() => {
+                                        handleKeywordExtractBtn()
                                         openPopup()
                                     }}>
                                     <span className='font-bold text-white'>키워드 보기</span>
                                 </Button>
                                 <Button className='rounded-[7px] py-[12px] px-[28px] border-[2px] border-green-500 bg-green-500'
                                     onClick={() => {
-                                        openPopup()
+                                        openSumPopup()
+                                        handleSummarizeBtn()
                                     }}>
                                     <span className='font-bold text-white'>요약 보기</span>
+                                </Button>
+                                <Button className='rounded-[7px] py-[12px] px-[28px] border-[2px] border-green-500 bg-green-500'
+                                    onClick={() => {
+                                        openTPopup()
+                                        handleTranslateBtn()
+                                    }}>
+                                    <span className='font-bold text-white'>번역 보기</span>
                                 </Button>
                             </div>
                         </div>
@@ -161,7 +225,8 @@ const EmailDetail = () => {
                     <Popup title={"해당 이메일의 키워드 목록입니다."} onClose={closePopup}>
                         <div className="flex flex-col space-y-[10px] w-full">
                             {keywords.map((keyI, idx) => (
-                                <KeywordItem key={`${idx}-${keyI[0]}`} keyword={keyI[0]} />
+                               
+                                <KeywordItem key={`${idx}-${keyI[0]}`} keyword={keyI} />
                             ))}
                         </div>
                     </Popup>
@@ -169,9 +234,16 @@ const EmailDetail = () => {
                 {isSumPopupOpen &&
                     <Popup title={"해당 이메일의 요약입니다."} onClose={closeSumPopup}>
                         <div className="flex flex-col space-y-[10px] w-full">
-                            {keywords.map((keyI, idx) => (
-                                <KeywordItem key={`${idx}-${keyI[0]}`} keyword={keyI[0]} />
-                            ))}
+
+                        </div>
+                    </Popup>
+                }
+                {isTPopupOpen &&
+                    <Popup title={"해당 이메일의 번역입니다."} onClose={closeTPopup}>
+                        <div className="flex flex-col space-y-[10px] w-full">
+                            <div className="mt-10 p-10 border-[1px] rounded-[8px] border-gray">
+                                {translated && translated}
+                            </div>
                         </div>
                     </Popup>
                 }
