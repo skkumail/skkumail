@@ -1,40 +1,61 @@
-version: '3'
+version: "3"
 
 services:
-  frontend:
+  doc:
+    container_name: doc
     build:
-      context: frontend/
-    container_name: frontend
+      context: docs
     environment:
-      - VIRTUAL_HOST=${FRONTEND_VIRTUAL_HOST}
-      - LETSENCRYPT_HOST=${FRONTEND_LETSENCRYPT_HOST}
+      - VIRTUAL_HOST=${DOC_VIRTUAL_HOST}
+      - LETSENCRYPT_HOST=${DOC_LETSENCRYPT_HOST}
+      - LETSENCRYPT_EMAIL=${LETSENCRYPT_EMAIL}
+    ports:
+      - ${DOC_PORT}:${DOC_PORT}
+
+  db:
+    image: mariadb:lts-jammy
+    container_name: db
+    environment:
+      - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${DB_DATABASE}
+      - MYSQL_USER=${DB_USER}
+      - MYSQL_PASSWORD=${DB_PASSWORD}
+    volumes:
+      - volume-db:/var/lib/mysql
+    ports:
+      - ${DB_PORT}:${DB_PORT}
+
+  web:
+    container_name: web
+    build:
+      context: src
+    environment:
+      - VIRTUAL_HOST=${WEB_VIRTUAL_HOST}
+      - LETSENCRYPT_HOST=${WEB_LETSENCRYPT_HOST}
       - LETSENCRYPT_EMAIL=${LETSENCRYPT_EMAIL}
 
-      - FRONTEND_PORT=${FRONTEND_PORT}
-      - FRONTEND_HOST=${FRONTEND_HOST}
-      - BACKEND_PORT=${BACKEND_PORT}
-      - BACKEND_HOST=${BACKEND_HOST}
-      - NEXT_PUBLIC_BACKEND_HOST=${NEXT_PUBLIC_BACKEND_HOST}
-      - NEXT_PUBLIC_BACKEND_PORT=${NEXT_PUBLIC_BACKEND_PORT}
-      
-    ports:
-      - ${FRONTEND_PORT}:${FRONTEND_PORT}
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_DATABASE=${DB_DATABASE}
 
-  backend:
-    build:
-      context: backend/
-    container_name: backend
-    ports:
-      - ${BACKEND_PORT}:${BACKEND_PORT}
-    environment:
-      - VIRTUAL_HOST=${BACKEND_VIRTUAL_HOST}
-      - LETSENCRYPT_HOST=${BACKEND_LETSENCRYPT_HOST}
-      - LETSENCRYPT_EMAIL=${LETSENCRYPT_EMAIL}
-      - FRONTEND_PORT=${FRONTEND_PORT}
-      - FRONTEND_HOST=${FRONTEND_HOST}
-      - BACKEND_PORT=${BACKEND_PORT}
-      - BACKEND_HOST=${BACKEND_HOST}
+      - SECRET_KEY=${DJANGO_SECRET_KEY}
+      - DEBUG='False'
+
+      - MYSQL_DATABASE=${DB_DATABASE}
+      - MYSQL_USER=${DB_USER}
+      - MYSQL_PASSWORD=${DB_PASSWORD}
+
+      - IS_PROD=1
       - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - WEB_CRYPTOGRAPHY_KEY=${WEB_CRYPTOGRAPHY_KEY}
+    volumes:
+      - volume-web-static:/_static
+    ports:
+      - ${WEB_PORT}:${WEB_PORT}
+    depends_on:
+      - db
 
   nginx-proxy:
     image: nginxproxy/nginx-proxy:latest
@@ -45,20 +66,27 @@ services:
     volumes:
       - volume-nginx-certs:/etc/nginx/certs
       - volume-nginx-vhost:/etc/nginx/vhost.d
-      - volume-nginx-root:/usr/share/nginx/html
+      - volume-nginx-html:/usr/share/nginx/html
+      - volume-web-static:/usr/share/nginx/html/static:ro
+
       - /var/run/docker.sock:/tmp/docker.sock:ro
+      
 
   nginx-letsencrypt:
     image: nginxproxy/acme-companion:latest
     container_name: nginx-letsencrypt
     environment:
       - DEFAULT_EMAIL=${DEFAULT_EMAIL}
-    volumes_from:
-      - nginx-proxy
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
+      - volume-nginx-acme:/etc/acme.sh
+    depends_on:
+      - nginx-proxy
 
 volumes:
+  volume-db:
   volume-nginx-certs:
   volume-nginx-vhost:
-  volume-nginx-root:
+  volume-nginx-html:
+  volume-nginx-acme:
+  volume-web-static:
