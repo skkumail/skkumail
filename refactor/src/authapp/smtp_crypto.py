@@ -1,9 +1,9 @@
 from cryptography.fernet import Fernet
 from django.conf import settings
+import os
 
 # Initialize Fernet instance
-fernet = Fernet(settings.DJANGO_CRYPTOGRAPHY_KEY)
-
+fernet = Fernet(settings.DJANGO_CRYPTOGRAPHY_KEY.encode())
 
 def encrypt_smtp_password(password):
     """Encrypt the SMTP password."""
