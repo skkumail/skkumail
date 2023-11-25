@@ -1,0 +1,39 @@
+\hypertarget{rest__api_2views_8py}{}\doxysection{rest\+\_\+api/views.py File Reference}
+\label{rest__api_2views_8py}\index{rest\_api/views.py@{rest\_api/views.py}}
+\doxysubsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+ \mbox{\hyperlink{namespacerest__api_1_1views}{rest\+\_\+api.\+views}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+str \mbox{\hyperlink{namespacerest__api_1_1views_a1a804ebb48c42e54d499cc490ef3a1df}{rest\+\_\+api.\+views.\+get\+\_\+prompt}} (str topic, str details)
+\item 
+dict \mbox{\hyperlink{namespacerest__api_1_1views_ad1a31f46946e30e4a1e89ff431fe45a9}{rest\+\_\+api.\+views.\+get\+\_\+data}} (str topic, str details)
+\item 
+def \mbox{\hyperlink{namespacerest__api_1_1views_a8c6dabe1627473234d9a4e7308272381}{rest\+\_\+api.\+views.\+index}} (request)
+\item 
+def \mbox{\hyperlink{namespacerest__api_1_1views_ac6d170938adf832ba21033ad8aa0d484}{rest\+\_\+api.\+views.\+create\+\_\+ppt}} (request)
+\end{DoxyCompactItemize}
+\doxysubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{namespacerest__api_1_1views_a475d4b1975a0cd7bfac6c342cceeebf9}{rest\+\_\+api.\+views.\+logger}} = logging.\+get\+Logger(\+\_\+\+\_\+name\+\_\+\+\_\+)
+\item 
+\mbox{\hyperlink{namespacerest__api_1_1views_a76018e7ae64f9d90637fb0bd9c8769a8}{rest\+\_\+api.\+views.\+level}}
+\item 
+\mbox{\hyperlink{namespacerest__api_1_1views_a8345224e03206711a681dff1756270b4}{rest\+\_\+api.\+views.\+INFO}}
+\item 
+\mbox{\hyperlink{namespacerest__api_1_1views_a6ecea555d1c1d5499878618b331642b0}{rest\+\_\+api.\+views.\+format}}
+\item 
+\mbox{\hyperlink{namespacerest__api_1_1views_a3a24282312d02dbeb3c7b73917dd06bf}{rest\+\_\+api.\+views.\+openai\+\_\+api\+\_\+key}} = os.\+getenv(\textquotesingle{}OPENAI\+\_\+\+API\+\_\+\+KEY\textquotesingle{})
+\item 
+string \mbox{\hyperlink{namespacerest__api_1_1views_ab35c7aa8258e695f9c8414a68ceef43a}{rest\+\_\+api.\+views.\+openai\+\_\+model}} = \textquotesingle{}gpt-\/3.\+5-\/turbo\textquotesingle{}
+\item 
+dictionary \mbox{\hyperlink{namespacerest__api_1_1views_ab3eab7f5c40b4fee2433c5becd0c495e}{rest\+\_\+api.\+views.\+headers}}
+\item 
+dictionary \mbox{\hyperlink{namespacerest__api_1_1views_a656695a5db2c9a756e7c34261c43a0a4}{rest\+\_\+api.\+views.\+system\+\_\+role\+\_\+content}} = \{\char`\"{}role\char`\"{}\+: \char`\"{}system\char`\"{}, \char`\"{}content\char`\"{}\+: \char`\"{}You are making ppt for the class, skilled in making index and its belongings.\+showing only the title and content of the slides without other flowery words or summary or etc.\char`\"{}\}
+\item 
+string \mbox{\hyperlink{namespacerest__api_1_1views_a7b431cee602649b463e1b4780146aefd}{rest\+\_\+api.\+views.\+url}} = \char`\"{}https\+://api.\+openai.\+com/v1/chat/completions\char`\"{}
+\end{DoxyCompactItemize}

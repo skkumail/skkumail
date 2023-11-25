@@ -1,0 +1,194 @@
+\hypertarget{namespacerest__api_1_1views}{}\doxysection{rest\+\_\+api.\+views Namespace Reference}
+\label{namespacerest__api_1_1views}\index{rest\_api.views@{rest\_api.views}}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+str \mbox{\hyperlink{namespacerest__api_1_1views_a1a804ebb48c42e54d499cc490ef3a1df}{get\+\_\+prompt}} (str topic, str details)
+\item 
+dict \mbox{\hyperlink{namespacerest__api_1_1views_ad1a31f46946e30e4a1e89ff431fe45a9}{get\+\_\+data}} (str topic, str details)
+\item 
+def \mbox{\hyperlink{namespacerest__api_1_1views_a8c6dabe1627473234d9a4e7308272381}{index}} (request)
+\item 
+def \mbox{\hyperlink{namespacerest__api_1_1views_ac6d170938adf832ba21033ad8aa0d484}{create\+\_\+ppt}} (request)
+\end{DoxyCompactItemize}
+\doxysubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{namespacerest__api_1_1views_a475d4b1975a0cd7bfac6c342cceeebf9}{logger}} = logging.\+get\+Logger(\+\_\+\+\_\+name\+\_\+\+\_\+)
+\item 
+\mbox{\hyperlink{namespacerest__api_1_1views_a76018e7ae64f9d90637fb0bd9c8769a8}{level}}
+\item 
+\mbox{\hyperlink{namespacerest__api_1_1views_a8345224e03206711a681dff1756270b4}{INFO}}
+\item 
+\mbox{\hyperlink{namespacerest__api_1_1views_a6ecea555d1c1d5499878618b331642b0}{format}}
+\item 
+\mbox{\hyperlink{namespacerest__api_1_1views_a3a24282312d02dbeb3c7b73917dd06bf}{openai\+\_\+api\+\_\+key}} = os.\+getenv(\textquotesingle{}OPENAI\+\_\+\+API\+\_\+\+KEY\textquotesingle{})
+\item 
+string \mbox{\hyperlink{namespacerest__api_1_1views_ab35c7aa8258e695f9c8414a68ceef43a}{openai\+\_\+model}} = \textquotesingle{}gpt-\/3.\+5-\/turbo\textquotesingle{}
+\item 
+dictionary \mbox{\hyperlink{namespacerest__api_1_1views_ab3eab7f5c40b4fee2433c5becd0c495e}{headers}}
+\item 
+dictionary \mbox{\hyperlink{namespacerest__api_1_1views_a656695a5db2c9a756e7c34261c43a0a4}{system\+\_\+role\+\_\+content}} = \{\char`\"{}role\char`\"{}\+: \char`\"{}system\char`\"{}, \char`\"{}content\char`\"{}\+: \char`\"{}You are making ppt for the class, skilled in making \mbox{\hyperlink{namespacerest__api_1_1views_a8c6dabe1627473234d9a4e7308272381}{index}} and its belongings.\+showing only the title and content of the slides without other flowery words or summary or etc.\char`\"{}\}
+\item 
+string \mbox{\hyperlink{namespacerest__api_1_1views_a7b431cee602649b463e1b4780146aefd}{url}} = \char`\"{}https\+://api.\+openai.\+com/v1/chat/completions\char`\"{}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{namespacerest__api_1_1views_ac6d170938adf832ba21033ad8aa0d484}\label{namespacerest__api_1_1views_ac6d170938adf832ba21033ad8aa0d484}} 
+\index{rest\_api.views@{rest\_api.views}!create\_ppt@{create\_ppt}}
+\index{create\_ppt@{create\_ppt}!rest\_api.views@{rest\_api.views}}
+\doxysubsubsection{\texorpdfstring{create\_ppt()}{create\_ppt()}}
+{\footnotesize\ttfamily def rest\+\_\+api.\+views.\+create\+\_\+ppt (\begin{DoxyParamCaption}\item[{}]{request }\end{DoxyParamCaption})}
+
+
+
+Definition at line 66 of file views.\+py.
+
+
+
+References rest\+\_\+api.\+views.\+get\+\_\+data().
+
+\mbox{\Hypertarget{namespacerest__api_1_1views_ad1a31f46946e30e4a1e89ff431fe45a9}\label{namespacerest__api_1_1views_ad1a31f46946e30e4a1e89ff431fe45a9}} 
+\index{rest\_api.views@{rest\_api.views}!get\_data@{get\_data}}
+\index{get\_data@{get\_data}!rest\_api.views@{rest\_api.views}}
+\doxysubsubsection{\texorpdfstring{get\_data()}{get\_data()}}
+{\footnotesize\ttfamily dict rest\+\_\+api.\+views.\+get\+\_\+data (\begin{DoxyParamCaption}\item[{str}]{topic,  }\item[{str}]{details }\end{DoxyParamCaption})}
+
+
+
+Definition at line 47 of file views.\+py.
+
+
+
+References rest\+\_\+api.\+views.\+get\+\_\+prompt().
+
+
+
+Referenced by rest\+\_\+api.\+views.\+create\+\_\+ppt().
+
+\mbox{\Hypertarget{namespacerest__api_1_1views_a1a804ebb48c42e54d499cc490ef3a1df}\label{namespacerest__api_1_1views_a1a804ebb48c42e54d499cc490ef3a1df}} 
+\index{rest\_api.views@{rest\_api.views}!get\_prompt@{get\_prompt}}
+\index{get\_prompt@{get\_prompt}!rest\_api.views@{rest\_api.views}}
+\doxysubsubsection{\texorpdfstring{get\_prompt()}{get\_prompt()}}
+{\footnotesize\ttfamily str rest\+\_\+api.\+views.\+get\+\_\+prompt (\begin{DoxyParamCaption}\item[{str}]{topic,  }\item[{str}]{details }\end{DoxyParamCaption})}
+
+
+
+Definition at line 28 of file views.\+py.
+
+
+
+Referenced by rest\+\_\+api.\+views.\+get\+\_\+data().
+
+\mbox{\Hypertarget{namespacerest__api_1_1views_a8c6dabe1627473234d9a4e7308272381}\label{namespacerest__api_1_1views_a8c6dabe1627473234d9a4e7308272381}} 
+\index{rest\_api.views@{rest\_api.views}!index@{index}}
+\index{index@{index}!rest\_api.views@{rest\_api.views}}
+\doxysubsubsection{\texorpdfstring{index()}{index()}}
+{\footnotesize\ttfamily def rest\+\_\+api.\+views.\+index (\begin{DoxyParamCaption}\item[{}]{request }\end{DoxyParamCaption})}
+
+
+
+Definition at line 59 of file views.\+py.
+
+
+
+\doxysubsection{Variable Documentation}
+\mbox{\Hypertarget{namespacerest__api_1_1views_a6ecea555d1c1d5499878618b331642b0}\label{namespacerest__api_1_1views_a6ecea555d1c1d5499878618b331642b0}} 
+\index{rest\_api.views@{rest\_api.views}!format@{format}}
+\index{format@{format}!rest\_api.views@{rest\_api.views}}
+\doxysubsubsection{\texorpdfstring{format}{format}}
+{\footnotesize\ttfamily rest\+\_\+api.\+views.\+format}
+
+
+
+Definition at line 12 of file views.\+py.
+
+\mbox{\Hypertarget{namespacerest__api_1_1views_ab3eab7f5c40b4fee2433c5becd0c495e}\label{namespacerest__api_1_1views_ab3eab7f5c40b4fee2433c5becd0c495e}} 
+\index{rest\_api.views@{rest\_api.views}!headers@{headers}}
+\index{headers@{headers}!rest\_api.views@{rest\_api.views}}
+\doxysubsubsection{\texorpdfstring{headers}{headers}}
+{\footnotesize\ttfamily dictionary rest\+\_\+api.\+views.\+headers}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{1 =  \{}
+\DoxyCodeLine{2     \textcolor{stringliteral}{"{}Content-\/Type"{}}: \textcolor{stringliteral}{"{}application/json"{}},}
+\DoxyCodeLine{3     \textcolor{stringliteral}{"{}Authorization"{}}: f\textcolor{stringliteral}{"{}Bearer \{openai\_api\_key\}"{}}}
+\DoxyCodeLine{4 \}}
+
+\end{DoxyCode}
+
+
+Definition at line 17 of file views.\+py.
+
+\mbox{\Hypertarget{namespacerest__api_1_1views_a8345224e03206711a681dff1756270b4}\label{namespacerest__api_1_1views_a8345224e03206711a681dff1756270b4}} 
+\index{rest\_api.views@{rest\_api.views}!INFO@{INFO}}
+\index{INFO@{INFO}!rest\_api.views@{rest\_api.views}}
+\doxysubsubsection{\texorpdfstring{INFO}{INFO}}
+{\footnotesize\ttfamily rest\+\_\+api.\+views.\+INFO}
+
+
+
+Definition at line 12 of file views.\+py.
+
+\mbox{\Hypertarget{namespacerest__api_1_1views_a76018e7ae64f9d90637fb0bd9c8769a8}\label{namespacerest__api_1_1views_a76018e7ae64f9d90637fb0bd9c8769a8}} 
+\index{rest\_api.views@{rest\_api.views}!level@{level}}
+\index{level@{level}!rest\_api.views@{rest\_api.views}}
+\doxysubsubsection{\texorpdfstring{level}{level}}
+{\footnotesize\ttfamily rest\+\_\+api.\+views.\+level}
+
+
+
+Definition at line 12 of file views.\+py.
+
+\mbox{\Hypertarget{namespacerest__api_1_1views_a475d4b1975a0cd7bfac6c342cceeebf9}\label{namespacerest__api_1_1views_a475d4b1975a0cd7bfac6c342cceeebf9}} 
+\index{rest\_api.views@{rest\_api.views}!logger@{logger}}
+\index{logger@{logger}!rest\_api.views@{rest\_api.views}}
+\doxysubsubsection{\texorpdfstring{logger}{logger}}
+{\footnotesize\ttfamily rest\+\_\+api.\+views.\+logger = logging.\+get\+Logger(\+\_\+\+\_\+name\+\_\+\+\_\+)}
+
+
+
+Definition at line 11 of file views.\+py.
+
+\mbox{\Hypertarget{namespacerest__api_1_1views_a3a24282312d02dbeb3c7b73917dd06bf}\label{namespacerest__api_1_1views_a3a24282312d02dbeb3c7b73917dd06bf}} 
+\index{rest\_api.views@{rest\_api.views}!openai\_api\_key@{openai\_api\_key}}
+\index{openai\_api\_key@{openai\_api\_key}!rest\_api.views@{rest\_api.views}}
+\doxysubsubsection{\texorpdfstring{openai\_api\_key}{openai\_api\_key}}
+{\footnotesize\ttfamily rest\+\_\+api.\+views.\+openai\+\_\+api\+\_\+key = os.\+getenv(\textquotesingle{}OPENAI\+\_\+\+API\+\_\+\+KEY\textquotesingle{})}
+
+
+
+Definition at line 15 of file views.\+py.
+
+\mbox{\Hypertarget{namespacerest__api_1_1views_ab35c7aa8258e695f9c8414a68ceef43a}\label{namespacerest__api_1_1views_ab35c7aa8258e695f9c8414a68ceef43a}} 
+\index{rest\_api.views@{rest\_api.views}!openai\_model@{openai\_model}}
+\index{openai\_model@{openai\_model}!rest\_api.views@{rest\_api.views}}
+\doxysubsubsection{\texorpdfstring{openai\_model}{openai\_model}}
+{\footnotesize\ttfamily string rest\+\_\+api.\+views.\+openai\+\_\+model = \textquotesingle{}gpt-\/3.\+5-\/turbo\textquotesingle{}}
+
+
+
+Definition at line 16 of file views.\+py.
+
+\mbox{\Hypertarget{namespacerest__api_1_1views_a656695a5db2c9a756e7c34261c43a0a4}\label{namespacerest__api_1_1views_a656695a5db2c9a756e7c34261c43a0a4}} 
+\index{rest\_api.views@{rest\_api.views}!system\_role\_content@{system\_role\_content}}
+\index{system\_role\_content@{system\_role\_content}!rest\_api.views@{rest\_api.views}}
+\doxysubsubsection{\texorpdfstring{system\_role\_content}{system\_role\_content}}
+{\footnotesize\ttfamily dictionary rest\+\_\+api.\+views.\+system\+\_\+role\+\_\+content = \{\char`\"{}role\char`\"{}\+: \char`\"{}system\char`\"{}, \char`\"{}content\char`\"{}\+: \char`\"{}You are making ppt for the class, skilled in making \mbox{\hyperlink{namespacerest__api_1_1views_a8c6dabe1627473234d9a4e7308272381}{index}} and its belongings.\+showing only the title and content of the slides without other flowery words or summary or etc.\char`\"{}\}}
+
+
+
+Definition at line 22 of file views.\+py.
+
+\mbox{\Hypertarget{namespacerest__api_1_1views_a7b431cee602649b463e1b4780146aefd}\label{namespacerest__api_1_1views_a7b431cee602649b463e1b4780146aefd}} 
+\index{rest\_api.views@{rest\_api.views}!url@{url}}
+\index{url@{url}!rest\_api.views@{rest\_api.views}}
+\doxysubsubsection{\texorpdfstring{url}{url}}
+{\footnotesize\ttfamily string rest\+\_\+api.\+views.\+url = \char`\"{}https\+://api.\+openai.\+com/v1/chat/completions\char`\"{}}
+
+
+
+Definition at line 23 of file views.\+py.
+
