@@ -20,4 +20,3 @@ ENV GUNICORN_WORKERS=3
 
 RUN chmod +x entrypoint.sh
 ENTRYPOINT ["./entrypoint.sh"]
-

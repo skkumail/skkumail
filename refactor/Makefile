@@ -7,6 +7,11 @@ help:
 	@echo "  action: pull, up, down, logs, build"
 	@echo "  service: all, $(SERVICES)"
 
+# 자동 문서화 추가
+docs: src/* Doxyfile
+	@doxygen Doxyfile
+
+
 check-service:
 ifndef service
 	$(error service is undefined. Use 'all' for all services or specify one: $(SERVICES))
@@ -23,7 +28,7 @@ pull: check-service
 		sudo docker-compose pull $(service); \
 	fi
 
-build: check-service
+build: check-service docs
 	@if [ "$(service)" = "all" ]; then \
 		sudo docker-compose build; \
 	else \

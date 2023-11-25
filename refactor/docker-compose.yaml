@@ -1,6 +1,17 @@
 version: "3"
 
 services:
+  doc:
+    container_name: doc
+    build:
+      context: docs
+    environment:
+      - VIRTUAL_HOST=${DOC_VIRTUAL_HOST}
+      - LETSENCRYPT_HOST=${DOC_LETSENCRYPT_HOST}
+      - LETSENCRYPT_EMAIL=${LETSENCRYPT_EMAIL}
+    ports:
+      - ${DOC_PORT}:${DOC_PORT}
+
   db:
     image: mariadb:lts-jammy
     container_name: db
@@ -19,8 +30,8 @@ services:
     build:
       context: src
     environment:
-      - VIRTUAL_HOST=${VIRTUAL_HOST}
-      - LETSENCRYPT_HOST=${LETSENCRYPT_HOST}
+      - VIRTUAL_HOST=${WEB_VIRTUAL_HOST}
+      - LETSENCRYPT_HOST=${WEB_LETSENCRYPT_HOST}
       - LETSENCRYPT_EMAIL=${LETSENCRYPT_EMAIL}
 
       - DB_HOST=${DB_HOST}
@@ -61,11 +72,11 @@ services:
     container_name: nginx-letsencrypt
     environment:
       - DEFAULT_EMAIL=${DEFAULT_EMAIL}
-    volumes_from:
-      - nginx-proxy
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - volume-nginx-acme:/etc/acme.sh
+    depends_on:
+      - nginx-proxy
 
 volumes:
   volume-db:

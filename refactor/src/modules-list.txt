@@ -1,0 +1,17 @@
+django
+django-widget-tweaks
+gunicorn
+uvicorn
+mysqlclient
+tzdata
+requests
+imap_tools
+openai
+transformers
+googletrans
+keybert
+scikit-learn
+
+# Code Formatter
+black
+pre-commit
