@@ -11,6 +11,7 @@ transformers
 googletrans
 keybert
 scikit-learn
+django-cryptography
 
 # Code Formatter
 black
