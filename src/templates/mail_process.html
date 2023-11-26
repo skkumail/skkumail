@@ -1,0 +1,86 @@
+<!-- mail_process.html -->
+{% extends 'components/base.html' %}
+{% block main_area %}
+<div class="container my-5">
+  <div class="row justify-content-center">
+    <div class="col-md-10">
+      <div class="card mb-3">
+        <div class="card-header bg-primary text-white">
+          <h2>Generate Mail</h2>
+        </div>
+        <div class="card-body">
+          <form method="post" id="generate_form">
+            {% csrf_token %}
+            {% for field in generate_form %}
+            <div class="form-row">
+              <div class="form-group col-md-12">
+                <label for="{{ field.id_for_label }}" class="control-label">{{ field.label }}</label>
+                {% if field.label != "Text" %}
+                <input type="text" class="form-control" id="{{ field.id_for_label }}" name="{{ field.html_name }}" placeholder="{{ field.label }}" value="{{ field.value|default_if_none:'' }}">
+                {% else %}
+                <textarea type="text" class="form-control" id="{{ field.id_for_label }}" name="{{ field.html_name }}" placeholder="{{ field.label }}" value="{{ field.value|default_if_none:'' }}"></textarea>
+                {% endif %}
+                {% if field.help_text %}
+                <small class="form-text text-muted">{{ field.help_text }}</small>
+                {% endif %}
+                {% for error in field.errors %}
+                <div class="invalid-feedback">
+                  {{ error }}
+                </div>
+                {% endfor %}
+              </div>
+            </div>
+            {% endfor %}
+            <button type="submit" name="generate_mail" class="btn btn-primary">Generate Mail</button>
+          </form>
+        </div>
+      </div>
+      {% if content %}
+      <div class="card">
+        <div class="card-header bg-success text-white">
+          <h2>Preview and Send Your Email</h2>
+        </div>
+        <div class="card-body">
+          <form method="post" id="send_form">
+            {% csrf_token %}
+            {% for field in send_form %}
+            <div class="form-row">
+              <div class="form-group col-md-12">
+                <label for="{{ field.id_for_label }}" class="control-label">{{ field.label }}</label>
+                {% if field.label != "Message" %}
+                <input type="text" class="form-control" id="{{ field.id_for_label }}" name="{{ field.html_name }}" placeholder="{{ field.label }}" value="{{ field.value|default_if_none:'' }}">
+                {% else %}
+                <textarea type="text" class="form-control" id="{{ field.id_for_label }}" name="{{ field.html_name }}" placeholder="{{ field.label }}" value="{{ field.value|default_if_none:'' }}"></textarea>
+                {% endif %}
+                {% if field.help_text %}
+                <small class="form-text text-muted">{{ field.help_text }}</small>
+                {% endif %}
+                {% for error in field.errors %}
+                <div class="invalid-feedback">
+                  {{ error }}
+                </div>
+                {% endfor %}
+              </div>
+            </div>
+            {% endfor %}
+            <button type="submit" name="send_mail" class="btn btn-success">Send Mail</button>
+          </form>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<!-- Loading Animation -->
+<div id="loading" style="display:none;">
+  <div class="text-center">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+</div>
+
+
+
+{% endblock %}

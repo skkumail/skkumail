@@ -18,7 +18,7 @@
           <hr/>
           {% if request.user.is_authenticated %}
           <p class="lead">Hello, {{ request.user.username }}!</p>
-          <a href="rest_api/create_email" class="btn btn-primary">Create Email</a>
+          <a href="{% url 'generate_mail' %}" class="btn btn-primary">Generate Email</a>
           <a href="{% url 'logout' %}" class="btn btn-info">Logout</a>
           <hr/>
           {% else %}

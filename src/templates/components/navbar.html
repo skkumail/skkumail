@@ -18,6 +18,9 @@
       </li>
       {% if request.user.is_authenticated %}
       <li class="nav-item">
+        <a class="nav-link" href="{% url 'generate_mail' %}">Generate Email</a>
+      </li>
+      <li class="nav-item">
         <a class="nav-link" href="{% url 'delete_account' %}">Delete Account</a>
       </li>
       <li class="nav-item">
