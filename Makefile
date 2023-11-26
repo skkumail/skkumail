@@ -1,6 +1,6 @@
 .PHONY: pull up down help logs build
 
-SERVICES := db frontend backend nginx-proxy nginx-letsencrypt
+SERVICES := db doc web nginx-proxy nginx-letsencrypt
 
 help:
 	@echo "Usage: make [action] service=<service>"
