@@ -40,7 +40,7 @@ services:
       - DB_PASSWORD=${DB_PASSWORD}
       - DB_DATABASE=${DB_DATABASE}
 
-      - SECRET_KEY=${DJANGO_SECRET_KEY}
+      - SECRET_KEY=${WEB_SECRET_KEY}
       - DEBUG='False'
 
       - MYSQL_DATABASE=${DB_DATABASE}
@@ -48,7 +48,7 @@ services:
       - MYSQL_PASSWORD=${DB_PASSWORD}
 
       - IS_PROD=1
-      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - OPENAI_API_KEY=${WEB_OPENAI_API_KEY}
       - WEB_CRYPTOGRAPHY_KEY=${WEB_CRYPTOGRAPHY_KEY}
     volumes:
       - volume-web-static:/_static
