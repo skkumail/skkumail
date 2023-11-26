@@ -1,4 +1,4 @@
-FROM ubuntu:latest
+FROM ubuntu:jammy
 
 RUN apt-get update \
     && apt-get upgrade -y \
@@ -15,8 +15,6 @@ RUN pip3 install --no-cache-dir -r requirements.txt
 COPY . .
 
 EXPOSE 8080 
-
-ENV GUNICORN_WORKERS=3
 
 RUN chmod +x entrypoint.sh
 ENTRYPOINT ["./entrypoint.sh"]
