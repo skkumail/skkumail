@@ -8,8 +8,13 @@
         <div class="text-center">
           <h1 class="display-4">Mail AI</h1>
           <p class="lead">AI-powered Mail Manager</p>
-          {% load static %}
-          <img src="{% static 'images/landing.png' %}" alt="First slide" class="d-block w-100 img-fluid" style="max-width: 500px; height: auto;">
+		  <img src="https://avatars.githubusercontent.com/u/145848696?s=400&u=192e08999864aba8d9c578b33f5fda95474dcad0&v=4"
+     alt="First slide"
+     class="d-block mx-auto img-fluid"
+     style="height: auto;">
+
+
+
           <hr/>
           {% if request.user.is_authenticated %}
           <p class="lead">Hello, {{ request.user.username }}!</p>

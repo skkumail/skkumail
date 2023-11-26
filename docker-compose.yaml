@@ -43,8 +43,6 @@ services:
       - WEB_CRYPTOGRAPHY_KEY=${WEB_CRYPTOGRAPHY_KEY}
     ports:
       - "8000:8000"
-    volumes:
-      - volume-web-static:/_static
     depends_on:
       - db
 
@@ -54,8 +52,6 @@ services:
     ports:
       - "80:80"
       - "443:443"
-    volumes_from:
-      - web
     volumes:
       - /etc/nginx/certs
       - /etc/nginx/vhost.d
@@ -74,4 +70,3 @@ services:
 
 volumes:
   volume-db:
-  volume-web-static:

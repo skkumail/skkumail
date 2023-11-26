@@ -23,6 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = str(os.environ.get('WEB_SECRET_KEY'))
 PUBLIC_HOST = os.environ.get("LETSENCRYPT_HOST", 'localhost')
+print(PUBLIC_HOST)
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('WEB_DEBUG')
@@ -63,6 +64,8 @@ CSRF_TRUSTED_ORIGINS = (
     f'https://{PUBLIC_HOST}',
     f'http://{PUBLIC_HOST}',
 )
+
+print(CSRF_TRUSTED_ORIGINS)
 
 CORS_ORIGIN_WHITELIST = (
     f'https://{PUBLIC_HOST}',

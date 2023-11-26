@@ -7,11 +7,6 @@ fi
 
 python3 manage.py makemigrations
 python3 manage.py migrate
-python3 manage.py collectstatic
+python3 manage.py collectstatic --no-input
 # b, w, k, t
-exec gunicorn \
-  --bind 0.0.0.0:8000 \
-  --workers ${WORKERS} \
-  --worker-class uvicorn.workers.UvicornWorker \
-  --timeout 3600 \
-  mailai.asgi:application
+exec gunicorn --worker-class uvicorn.workers.UvicornWorker --workers ${WORKERS} --bind 0.0.0.0:8000 --timeout 3600 mailai.asgi:application
