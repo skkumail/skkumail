@@ -1,9 +1,4 @@
 import smtplib
-from cryptography.fernet import Fernet
-from django.conf import settings
-
-# Initialize Fernet instance
-fernet = Fernet(settings.DJANGO_CRYPTOGRAPHY_KEY.encode())
 
 
 def verify_smtp_credentials(email, smtp_password):
