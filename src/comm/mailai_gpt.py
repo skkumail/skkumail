@@ -1,6 +1,6 @@
 import requests
 from django.conf import settings
-import textwrap
+from authapp.models import User
 
 # Set your OpenAI API key and model
 openai_api_key = settings.OPENAI_API_KEY
@@ -28,8 +28,14 @@ system_role_title = {
 }
 
 
-def get_mail_content_generator_prompt(name: str, relation: str, style: str, text: str) -> str:
+def get_mail_content_generator_prompt(user_id: str, name: str, relation: str, style: str, text: str) -> str:
+    user: User = User.objects.get(id=user_id)
+    first_name: str = user.first_name
+    last_name: str = user.last_name
+
     return (f"Please consider all the following details "
+            f"Sender's First Name is {first_name}, "
+            f"Sender's Last Name is {last_name}, "
             f"when writing a business email. The recipient's name is {name}, "
             f"and our relationship is {relation}. "
             f"The email should be written in a {style} tone. "
@@ -57,8 +63,8 @@ def generate_mail_title(content: str) -> str:
     return str(result.get('choices', [{}])[0].get('message', {}).get('content', '')).strip()
 
 
-def generate_mail_content(name: str, relation: str, style: str, text: str) -> str:
-    prompt = get_mail_content_generator_prompt(name, relation, style, text)
+def generate_mail_content(user_id: str, name: str, relation: str, style: str, text: str) -> str:
+    prompt = get_mail_content_generator_prompt(user_id, name, relation, style, text)
     user_role_content = {"role": "user", "content": prompt}
     data = {
         "model": openai_model,
@@ -70,4 +76,4 @@ def generate_mail_content(name: str, relation: str, style: str, text: str) -> st
     response.raise_for_status()
 
     result = response.json()
-    return "\n"+str(result.get('choices', [{}])[0].get('message', {}).get('content', '')).strip()
+    return "\n" + str(result.get('choices', [{}])[0].get('message', {}).get('content', '')).strip()

@@ -5,12 +5,6 @@ from authapp.models import UserProfile
 from comm.smtp_crypto import decrypt_smtp_password
 
 
-def generate_mail_content(name, relation, style, text):
-    # Call ChatGPT API to generate mail content
-    # This is a placeholder function
-    return "Generated email content based on input parameters."
-
-
 def send_mail(user_id, recipient, subject, message):
     user = User.objects.get(id=user_id)
     user_profile = UserProfile.objects.get(user=user)

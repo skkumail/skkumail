@@ -25,7 +25,7 @@ def mail_process_view(request):
             relation = generate_form.cleaned_data['relation']
             style = generate_form.cleaned_data['style']
             text = generate_form.cleaned_data['text']
-            content = generate_mail_content(name, relation, style, text)
+            content = generate_mail_content(request.user.id, name, relation, style, text)
             subject = generate_mail_title(content=content)
             # Re-render the same page with the send form pre-filled
             send_form = SendMailForm(initial={'message': content, 'subject': subject})
