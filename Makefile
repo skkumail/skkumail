@@ -9,8 +9,8 @@ help:
 
 # 자동 문서화 추가
 docs: src/* Doxyfile
-	@doxygen Doxyfile
-
+	#@doxygen Doxyfile
+	@./build_docs.sh
 
 check-service:
 ifndef service
