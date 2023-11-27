@@ -21,7 +21,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = str(os.environ.get('WEB_SECRET_KEY'))
 PUBLIC_HOST = os.environ.get("LETSENCRYPT_HOST", 'localhost')
-print(PUBLIC_HOST)
+OPENAI_API_KEY = os.environ.get("WEB_OPENAI_API_KEY")
+OPENAI_MODEL = os.environ.get("WEB_OPENAI_MODEL")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('WEB_DEBUG')
@@ -116,7 +117,7 @@ WSGI_APPLICATION = 'mailai.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-if os.environ.get('IS_PROD') == '1':
+if os.environ.get('WEB_IS_PROD') == '1':
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.mysql',
