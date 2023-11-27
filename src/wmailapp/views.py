@@ -1,12 +1,10 @@
-# views.py
-# views.py
-
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_protect
 
-from comm.mailai_smtp import generate_mail_content, send_mail
+from comm.mailai_smtp import send_mail
+from comm.mailai_gpt import generate_mail_content
 from .forms import GenerateMailForm, SendMailForm
 
 
@@ -30,7 +28,8 @@ def mail_process_view(request):
             content = generate_mail_content(name, relation, style, text)
             # Re-render the same page with the send form pre-filled
             send_form = SendMailForm(initial={'message': content})
-            return render(request, 'mail_process.html', {'generate_form': generate_form, 'send_form': send_form, 'content': content})
+            return render(request, 'mail_process.html',
+                          {'generate_form': generate_form, 'send_form': send_form, 'content': content})
 
     # Handle form submission for sending mail
     if 'send_mail' in request.POST:
@@ -50,6 +49,5 @@ def mail_process_view(request):
             'send_form': SendMailForm(),
             'email_sent': email_sent
         })
-
 
     return render(request, 'mail_process.html', {'generate_form': GenerateMailForm(), 'send_form': SendMailForm()})
