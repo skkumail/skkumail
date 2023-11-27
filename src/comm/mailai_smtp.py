@@ -2,7 +2,7 @@ from django.contrib.auth.models import User
 from django.core.mail import get_connection, EmailMessage
 
 from authapp.models import UserProfile
-from utils.smtp_crypto import decrypt_smtp_password
+from comm.smtp_crypto import decrypt_smtp_password
 
 
 def generate_mail_content(name, relation, style, text):

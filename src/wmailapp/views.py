@@ -6,7 +6,7 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_protect
 
-from utils.mailai_smtp import generate_mail_content, send_mail
+from comm.mailai_smtp import generate_mail_content, send_mail
 from .forms import GenerateMailForm, SendMailForm
 
 
@@ -41,9 +41,6 @@ def mail_process_view(request):
             message = send_form.cleaned_data['message']
             send_mail(request.user.id, recipient, subject, message)
             # Redirect or display a success message after sending the mail
-            #return redirect(reverse('mail_sent'))
-            #return JsonResponse({'status': 'success', 'message': 'Email sent successfully.'})
-            #return redirect("{% url 'generate_mail' %}", email_sent=True)
             return redirect(reverse('generate_mail') + '?email_sent=True')
 
         # Add a context variable to indicate email sending status
