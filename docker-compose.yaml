@@ -33,13 +33,15 @@ services:
       - DB_USER=${DB_USER}
       - DB_PASSWORD=${DB_PASSWORD}
       - DB_DATABASE=${DB_DATABASE}
-      - SECRET_KEY=${WEB_SECRET_KEY}
-      - DEBUG='False'
       - MYSQL_DATABASE=${DB_DATABASE}
       - MYSQL_USER=${DB_USER}
       - MYSQL_PASSWORD=${DB_PASSWORD}
-      - IS_PROD=1
-      - OPENAI_API_KEY=${WEB_OPENAI_API_KEY}
+
+      - WEB_SECRET_KEY=${WEB_SECRET_KEY}
+      - WEB_DEBUG='False'
+      - WEB_IS_PROD=1
+      - WEB_OPENAI_API_KEY=${WEB_OPENAI_API_KEY}
+      - WEB_OPENAI_MODEL=${WEB_OPENAI_MODEL}
       - WEB_CRYPTOGRAPHY_KEY=${WEB_CRYPTOGRAPHY_KEY}
     ports:
       - "8000:8000"
@@ -70,3 +72,4 @@ services:
 
 volumes:
   volume-db:
+
