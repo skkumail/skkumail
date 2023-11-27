@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'authapp',
     'django_cryptography',
     'wmailapp',
+    'comm',
 ]
 
 MIDDLEWARE = [
