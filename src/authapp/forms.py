@@ -27,3 +27,10 @@ class SignupForm(UserCreationForm):
 class LoginForm(forms.Form):
     username = forms.CharField()
     password = forms.CharField(widget=forms.PasswordInput)
+
+class PasswordConfirmationForm(forms.Form):
+    password = forms.CharField(widget=forms.PasswordInput)
+
+    def clean_password(self):
+        # You can add custom password validation here if needed
+        return self.cleaned_data['password']
