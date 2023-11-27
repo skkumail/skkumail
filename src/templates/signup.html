@@ -11,24 +11,22 @@
             {% csrf_token %}
             {% for field in form %}
             <div class="mb-3">
+              {% if field.name == 'password1' or field.name == 'password2' or field.name == 'smtp_password' %}
               <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
-              {% if field.widget.input_type == 'checkbox' %}
-              <div class="form-check">
-                {{ field }}
-                <label class="form-check-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
-              </div>
-              {% else %}
-              {% if field.name == 'smtp_password' %}
-              <input type="password" class="form-control {% if field.errors %}is-invalid{% endif %}" id="{{ field.id_for_label }}" name="{{ field.name }}" required>
+              <input type="password" class="form-control {% if field.errors %}is-invalid{% endif %}"
+                     id="{{ field.id_for_label }}" name="{{ field.name }}" required>
               {% for error in field.errors %}
               <div class="invalid-feedback">{{ error }}</div>
               {% endfor %}
               {% else %}
+              <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
               {{ field|add_class:"form-control" }}
-              {% endif %}
               {% if field.help_text %}
               <small class="form-text text-muted">{{ field.help_text }}</small>
               {% endif %}
+              {% for error in field.errors %}
+              <div class="invalid-feedback">{{ error }}</div>
+              {% endfor %}
               {% endif %}
             </div>
             {% endfor %}
@@ -45,3 +43,4 @@
   </div>
 </div>
 {% endblock %}
+
