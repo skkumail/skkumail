@@ -17,15 +17,22 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
-
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = str(os.environ.get('WEB_SECRET_KEY'))
-PUBLIC_HOST = os.environ.get("LETSENCRYPT_HOST", 'localhost')
-OPENAI_API_KEY = os.environ.get("WEB_OPENAI_API_KEY")
-OPENAI_MODEL = os.environ.get("WEB_OPENAI_MODEL")
-
+DJANGO_CRYPTOGRAPHY_KEY = str(os.environ.get("WEB_CRYPTOGRAPHY_KEY")).strip()
+SECRET_KEY = str(os.environ.get('WEB_SECRET_KEY', 'default_secret_key')).strip()
+PUBLIC_HOST = str(os.environ.get("LETSENCRYPT_HOST", 'localhost')).strip()
+OPENAI_API_KEY = str(os.environ.get("WEB_OPENAI_API_KEY", 'default_openai_key')).strip()
+OPENAI_MODEL = str(os.environ.get("WEB_OPENAI_MODEL", 'default_model')).strip()
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get('WEB_DEBUG')
+DEBUG = bool(str(os.environ.get('WEB_DEBUG', 'False')).strip())
+
+#print(f"SECRET_KEY set: {'Yes' if SECRET_KEY != 'default_secret_key' else 'No'}")
+print(f"SECRET_KEY: {SECRET_KEY}")
+print(f"DJANGO_CRYPTOGRAPY_KEY: {DJANGO_CRYPTOGRAPHY_KEY}")
+print(f"PUBLIC_HOST: {PUBLIC_HOST}")
+print(f"OPENAI_API_KEY set: {'Yes' if OPENAI_API_KEY != 'default_openai_key' else 'No'}")
+print(f"OPENAI_MODEL: {OPENAI_MODEL}")
+print(f"DEBUG: {DEBUG}")
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', PUBLIC_HOST]
 
@@ -178,4 +185,3 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-DJANGO_CRYPTOGRAPHY_KEY = os.environ.get("WEB_CRYPTOGRAPHY_KEY")
