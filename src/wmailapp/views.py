@@ -4,7 +4,7 @@ from django.urls import reverse
 from django.views.decorators.csrf import csrf_protect
 
 from comm.mailai_smtp import send_mail
-from comm.mailai_gpt import generate_mail_content
+from comm.mailai_gpt import generate_mail_content, generate_mail_title
 from .forms import GenerateMailForm, SendMailForm
 
 
@@ -26,8 +26,9 @@ def mail_process_view(request):
             style = generate_form.cleaned_data['style']
             text = generate_form.cleaned_data['text']
             content = generate_mail_content(name, relation, style, text)
+            subject = generate_mail_title(content=content)
             # Re-render the same page with the send form pre-filled
-            send_form = SendMailForm(initial={'message': content})
+            send_form = SendMailForm(initial={'message': content, 'subject': subject})
             return render(request, 'mail_process.html',
                           {'generate_form': generate_form, 'send_form': send_form, 'content': content})
 
