@@ -1,9 +1,0 @@
-fastapi
-uvicorn
-keybert
-openai
-googletrans==4.0.0rc1
-imap_tools
-sqlalchemy
-scikit-learn
-transformers

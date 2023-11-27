@@ -1,40 +1,50 @@
-version: '3'
+version: "3"
 
 services:
-  frontend:
-    build:
-      context: frontend/
-    container_name: frontend
+  db:
+    image: mariadb:lts-jammy
+    container_name: db
     environment:
-      - VIRTUAL_HOST=${FRONTEND_VIRTUAL_HOST}
-      - LETSENCRYPT_HOST=${FRONTEND_LETSENCRYPT_HOST}
+      - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${DB_DATABASE}
+      - MYSQL_USER=${DB_USER}
+      - MYSQL_PASSWORD=${DB_PASSWORD}
+    volumes:
+      - volume-db:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    expose:
+      - "3306"
+
+  web:
+    container_name: web
+    build:
+      context: src
+    expose:
+      - "8000"
+
+    environment:
+      - VIRTUAL_HOST=${WEB_VIRTUAL_HOST}
+      - LETSENCRYPT_HOST=${WEB_LETSENCRYPT_HOST}
       - LETSENCRYPT_EMAIL=${LETSENCRYPT_EMAIL}
 
-      - FRONTEND_PORT=${FRONTEND_PORT}
-      - FRONTEND_HOST=${FRONTEND_HOST}
-      - BACKEND_PORT=${BACKEND_PORT}
-      - BACKEND_HOST=${BACKEND_HOST}
-      - NEXT_PUBLIC_BACKEND_HOST=${NEXT_PUBLIC_BACKEND_HOST}
-      - NEXT_PUBLIC_BACKEND_PORT=${NEXT_PUBLIC_BACKEND_PORT}
-      
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_DATABASE=${DB_DATABASE}
+      - SECRET_KEY=${WEB_SECRET_KEY}
+      - DEBUG='False'
+      - MYSQL_DATABASE=${DB_DATABASE}
+      - MYSQL_USER=${DB_USER}
+      - MYSQL_PASSWORD=${DB_PASSWORD}
+      - IS_PROD=1
+      - OPENAI_API_KEY=${WEB_OPENAI_API_KEY}
+      - WEB_CRYPTOGRAPHY_KEY=${WEB_CRYPTOGRAPHY_KEY}
     ports:
-      - ${FRONTEND_PORT}:${FRONTEND_PORT}
-
-  backend:
-    build:
-      context: backend/
-    container_name: backend
-    ports:
-      - ${BACKEND_PORT}:${BACKEND_PORT}
-    environment:
-      - VIRTUAL_HOST=${BACKEND_VIRTUAL_HOST}
-      - LETSENCRYPT_HOST=${BACKEND_LETSENCRYPT_HOST}
-      - LETSENCRYPT_EMAIL=${LETSENCRYPT_EMAIL}
-      - FRONTEND_PORT=${FRONTEND_PORT}
-      - FRONTEND_HOST=${FRONTEND_HOST}
-      - BACKEND_PORT=${BACKEND_PORT}
-      - BACKEND_HOST=${BACKEND_HOST}
-      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - "8000:8000"
+    depends_on:
+      - db
 
   nginx-proxy:
     image: nginxproxy/nginx-proxy:latest
@@ -43,9 +53,9 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - volume-nginx-certs:/etc/nginx/certs
-      - volume-nginx-vhost:/etc/nginx/vhost.d
-      - volume-nginx-root:/usr/share/nginx/html
+      - /etc/nginx/certs
+      - /etc/nginx/vhost.d
+      - /usr/share/nginx/html
       - /var/run/docker.sock:/tmp/docker.sock:ro
 
   nginx-letsencrypt:
@@ -59,6 +69,4 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
 
 volumes:
-  volume-nginx-certs:
-  volume-nginx-vhost:
-  volume-nginx-root:
+  volume-db:
