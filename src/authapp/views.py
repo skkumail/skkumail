@@ -1,12 +1,13 @@
-from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login, logout
-from .forms import SignupForm, LoginForm
-from django.views.decorators.csrf import csrf_protect
 from django.contrib import messages
-from .signup_tools import verify_smtp_credentials
-from .smtp_crypto import encrypt_smtp_password, decrypt_smtp_password
-from .models import UserProfile
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect
+from django.views.decorators.csrf import csrf_protect
+
+from utils.smtp_crypto import encrypt_smtp_password, decrypt_smtp_password
+from .forms import SignupForm, LoginForm
+from .models import UserProfile
+from .signup_tools import verify_smtp_credentials
 
 
 @csrf_protect
@@ -57,6 +58,7 @@ def user_login(request):
 
 
 @csrf_protect
+@login_required
 # logout page
 def user_logout(request):
     logout(request)
