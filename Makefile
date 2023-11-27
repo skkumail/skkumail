@@ -28,7 +28,7 @@ pull: check-service
 		sudo docker-compose pull $(service); \
 	fi
 
-build: check-service docs
+build: check-service 
 	@if [ "$(service)" = "all" ]; then \
 		sudo docker-compose build; \
 	else \
