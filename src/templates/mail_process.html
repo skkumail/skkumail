@@ -8,7 +8,7 @@
         <div class="card-header bg-primary text-white"><h2>Generate Mail</h2>
         </div>
         <div class="card-body">
-          <form method="post" id="generate_form">
+          <form method="post" id="generate_form" onsubmit="showSpinner()">
             {% csrf_token %}
             {% for field in generate_form %}
             <div class="form-row">
@@ -35,6 +35,12 @@
             </div>
             {% endfor %}
             <button type="submit" name="generate_mail" class="btn btn-primary">Generate Mail</button>
+            <!-- Bootstrap Spinner for Loading State -->
+            <div class="text-center" id="loadingSpinner" style="display: none;">
+              <div class="spinner-border text-primary" role="status">
+                <span class="sr-only">Loading...</span>
+              </div>
+            </div>
           </form>
         </div>
       </div>
@@ -44,7 +50,7 @@
           <h2>Preview and Send Your Email</h2>
         </div>
         <div class="card-body">
-          <form method="post" id="send_form">
+          <form method="post" id="send_form" onsubmit="showSpinner()">
             {% csrf_token %}
             {% for field in send_form %}
             <div class="form-row">
@@ -57,8 +63,8 @@
                 {% else %}
                 <textarea class="form-control" id="{{ field.id_for_label }}"
                           name="{{ field.html_name }}" placeholder="{{ field.label }}">
-  {{ content|default_if_none:'' }}
-</textarea>
+                          {{ content|default_if_none:'' }}
+                </textarea>
                 {% endif %}
                 {% if field.help_text %}
                 <small class="form-text text-muted">{{ field.help_text }}</small>
@@ -72,6 +78,12 @@
             </div>
             {% endfor %}
             <button type="submit" name="send_mail" class="btn btn-success">Send Mail</button>
+            <!-- Bootstrap Spinner for Loading State -->
+            <div class="text-center" id="loadingSpinner" style="display: none;">
+              <div class="spinner-border text-primary" role="status">
+                <span class="sr-only">Loading...</span>
+              </div>
+            </div>
           </form>
 
         </div>
@@ -99,4 +111,11 @@
   </div>
 </div>
 
+<!-- JavaScript to Show Spinner -->
+<script>
+    function showSpinner() {
+        // Show the spinner
+        document.getElementById('loadingSpinner').style.display = 'block';
+    }
+</script>
 {% endblock %}
