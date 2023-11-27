@@ -26,13 +26,13 @@ OPENAI_MODEL = str(os.environ.get("WEB_OPENAI_MODEL", 'default_model')).strip()
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = bool(str(os.environ.get('WEB_DEBUG', 'False')).strip())
 
-#print(f"SECRET_KEY set: {'Yes' if SECRET_KEY != 'default_secret_key' else 'No'}")
-print(f"SECRET_KEY: {SECRET_KEY}")
-print(f"DJANGO_CRYPTOGRAPY_KEY: {DJANGO_CRYPTOGRAPHY_KEY}")
-print(f"PUBLIC_HOST: {PUBLIC_HOST}")
-print(f"OPENAI_API_KEY set: {'Yes' if OPENAI_API_KEY != 'default_openai_key' else 'No'}")
-print(f"OPENAI_MODEL: {OPENAI_MODEL}")
-print(f"DEBUG: {DEBUG}")
+# print(f"SECRET_KEY set: {'Yes' if SECRET_KEY != 'default_secret_key' else 'No'}")
+# print(f"SECRET_KEY: {SECRET_KEY}")
+# print(f"DJANGO_CRYPTOGRAPY_KEY: {DJANGO_CRYPTOGRAPHY_KEY}")
+# print(f"PUBLIC_HOST: {PUBLIC_HOST}")
+# print(f"OPENAI_API_KEY set: {'Yes' if OPENAI_API_KEY != 'default_openai_key' else 'No'}")
+# print(f"OPENAI_MODEL: {OPENAI_MODEL}")
+# print(f"DEBUG: {DEBUG}")
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', PUBLIC_HOST]
 
@@ -73,7 +73,6 @@ CSRF_TRUSTED_ORIGINS = (
     f'http://{PUBLIC_HOST}',
 )
 
-print(CSRF_TRUSTED_ORIGINS)
 
 CORS_ORIGIN_WHITELIST = (
     f'https://{PUBLIC_HOST}',
@@ -184,4 +183,3 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
