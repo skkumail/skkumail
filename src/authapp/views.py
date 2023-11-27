@@ -5,7 +5,7 @@ from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_protect
 
 from comm.smtp_crypto import encrypt_smtp_password, decrypt_smtp_password
-from .forms import SignupForm, LoginForm
+from .forms import SignupForm, LoginForm, PasswordConfirmationForm
 from .models import UserProfile
 from .signup_tools import verify_smtp_credentials
 
@@ -69,10 +69,21 @@ def user_logout(request):
 @login_required
 def delete_account(request):
     if request.method == 'POST':
-        user = request.user
-        user.delete()
-        logout(request)
-        messages.success(request, 'Your account has been successfully deleted.')
-        return redirect('login')  # Redirect to the home page or a page confirming account deletion
+        password_form = PasswordConfirmationForm(request.POST)
+        if password_form.is_valid():
+            user = request.user
+            # authenticate the user with the provided password
+            password = password_form.cleaned_data['password']
+            auth_user = authenticate(username=user.username, password=password)
+            if auth_user:
+                user.delete()
+                logout(request)
+                messages.success(request, 'Your account has been successfully deleted.')
+                return redirect('login')  # Redirect to a confirmation page
+            else:
+                messages.error(request, 'Password is incorrect.')
+        else:
+            messages.error(request, 'Please correct the errors below.')
     else:
-        return render(request, 'delete_account.html')  # A template that confirms account deletion
+        password_form = PasswordConfirmationForm()
+    return render(request, 'delete_account.html', {'password_form': password_form})
