@@ -7,6 +7,9 @@ from authapp.models import UserProfile
 from comm.mailai_base64 import process_email_to_include_base64_images
 from comm.smtp_crypto import decrypt_smtp_password
 from rmailapp.models import Email
+from django.utils import timezone
+
+
 
 logger = logging.getLogger(__name__)
 
@@ -23,7 +26,7 @@ def fetch_emails(user_id: int, max_emails: int = 500) -> bool:
 
     try:
         with MailBox('imap.gmail.com').login(email_user_name, imap_password, initial_folder='INBOX') as mailbox:
-            for msg in mailbox.fetch(AND(all=True), limit=max_emails, reverse=True):  # Fetch in reverse order, and limit to max_emails
+            for msg in mailbox.fetch(AND(all=True), limit=max_emails, reverse=True):
                 processed_body = process_email_to_include_base64_images(msg)
                 Email.objects.update_or_create(
                     uid=msg.uid,
@@ -31,7 +34,7 @@ def fetch_emails(user_id: int, max_emails: int = 500) -> bool:
                         'subject': msg.subject,
                         'sender': msg.from_,
                         'recipient': ",".join(msg.to),
-                        'date': msg.date,
+                        'date': timezone.make_aware(msg.date, timezone.get_default_timezone()),
                         'body': processed_body,
                         'username': user,
                     }
