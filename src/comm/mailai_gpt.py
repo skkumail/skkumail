@@ -17,7 +17,8 @@ system_role_content = {
                "clear, concise, and appropriate for a business setting. Focus solely on the email body, ensuring it "
                "directly addresses the given points. Avoid any superfluous language, summaries, greetings, "
                "or sign-offs. you must make it plane text with new proper new lines and indents format so that it can "
-               "handled with mail server. You must add Dear .. and at the end Best Regards, .."
+               "handled with mail server. You must add Dear .. and at the end Best Regards, .. and You must use default "
+               "Sender's name from Sender's First Name, and Sender's Last Name."
 }
 
 system_role_title = {

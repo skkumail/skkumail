@@ -7,22 +7,20 @@
       <!-- Fetch Emails Form -->
       <form id="fetchForm" method="post" class="mb-4">
         {% csrf_token %}
-        <button type="submit" name="fetch" class="btn btn-primary btn-block" id="fetchButton">Fetch Emails</button>
+        <button type="submit" name="fetch" class="btn btn-primary btn-block" id="fetchButton">📥 Fetch Emails</button>
       </form>
-
       <!-- Reset Emails Form -->
       <form id="resetForm" method="post" class="mb-4">
         {% csrf_token %}
         <div class="text-center mb-3">
           <p class="text-danger">Are you sure you want to delete all emails?</p>
         </div>
-        <button type="submit" name="reset" class="btn btn-danger btn-block" id="resetButton">Yes, delete all emails</button>
+        <button type="submit" name="reset" class="btn btn-danger btn-block" id="resetButton">🗑️ Yes, delete all emails</button>
         <a href="{% url 'show_emails' %}" class="btn btn-secondary btn-block">Cancel</a>
       </form>
     </div>
   </div>
 </div>
-
 <!-- Loading Spinner Modal -->
 <div class="modal" id="loadingModal" data-backdrop="static" data-keyboard="false" tabindex="-1">
   <div class="modal-dialog modal-dialog-centered">
@@ -36,7 +34,6 @@
     </div>
   </div>
 </div>
-
 <script>
   document.getElementById('fetchForm').addEventListener('submit', function() {
     $('#loadingModal').modal('show');
