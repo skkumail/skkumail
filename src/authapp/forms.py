@@ -1,8 +1,9 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from .models import UserProfile
+
 from comm.smtp_crypto import encrypt_smtp_password
+from .models import UserProfile
 
 
 class SignupForm(UserCreationForm):

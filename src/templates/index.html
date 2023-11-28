@@ -8,36 +8,56 @@
         <div class="text-center">
           <h1 class="display-4">Mail AI</h1>
           <p class="lead">AI-powered Mail Manager</p>
-		  <img src="https://avatars.githubusercontent.com/u/145848696?s=400&u=192e08999864aba8d9c578b33f5fda95474dcad0&v=4"
-     alt="First slide"
-     class="d-block mx-auto img-fluid"
-     style="height: auto;">
-
+          <img
+            src="https://avatars.githubusercontent.com/u/145848696?s=400&u=192e08999864aba8d9c578b33f5fda95474dcad0&v=4"
+            alt="First slide"
+            class="d-block mx-auto img-fluid"
+            style="height: auto;">
 
 
           <hr/>
-          {% if request.user.is_authenticated %}
-          <p class="lead">Hello, {{ request.user.username }}!</p>
-          <a href="{% url 'generate_mail' %}" class="btn btn-primary">Generate Email</a>
-          <a href="{% url 'logout' %}" class="btn btn-info">Logout</a>
+          <div class="container">
+            {% if request.user.is_authenticated %}
+            <p class="lead">Hello, {{ request.user.username }}!</p>
+            <div class="row">
+              <div class="col-md-6 mb-2">
+                <a href="{% url 'generate_mail' %}" class="btn btn-primary btn-block">Generate</a>
+              </div>
+              <div class="col-md-6 mb-2">
+                <a href="{% url 'show_emails' %}" class="btn btn-primary btn-block">Analyze</a>
+              </div>
+              <div class="col-md-6 mb-2">
+                <a href="{% url 'handle_emails' %}" class="btn btn-info btn-block">Fetch</a>
+              </div>
+              <div class="col-md-6 mb-2">
+                <a href="{% url 'logout' %}" class="btn btn-info btn-block">Logout</a>
+              </div>
+            </div>
+            {% else %}
+            <div class="row">
+              <div class="col-md-6 mb-2">
+                <a href="{% url 'login' %}" class="btn btn-primary btn-block">Login</a>
+              </div>
+              <div class="col-md-6 mb-2">
+                <a href="{% url 'signup' %}" class="btn btn-secondary btn-block">Signup</a>
+              </div>
+            </div>
+            {% endif %}
+          </div>
           <hr/>
-          {% else %}
-          <a href="{% url 'login' %}" class="btn btn-primary">Login</a>
-          <a href="{% url 'signup' %}" class="btn btn-secondary">Signup</a>
-          <hr/>
-          {% endif %}
+
         </div>
       </div>
     </div>
     <!-- Additional carousel items can be added here for more content -->
   </div>
   <a class="carousel-control-prev" href="#mainCarousel" role="button" data-slide="prev">
-  <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-  <span class="sr-only">Previous</span>
+    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    <span class="sr-only">Previous</span>
   </a>
   <a class="carousel-control-next" href="#mainCarousel" role="button" data-slide="next">
-  <span class="carousel-control-next-icon" aria-hidden="true"></span>
-  <span class="sr-only">Next</span>
+    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+    <span class="sr-only">Next</span>
   </a>
 </div>
 {% endblock %}

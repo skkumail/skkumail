@@ -3,8 +3,8 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_protect
 
-from comm.mailai_smtp import send_mail
 from comm.mailai_gpt import generate_mail_content, generate_mail_title
+from comm.mailai_smtp import send_mail
 from .forms import GenerateMailForm, SendMailForm
 
 
