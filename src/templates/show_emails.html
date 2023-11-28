@@ -1,0 +1,62 @@
+{% extends "components/base.html" %}
+{% block main_area %}
+<!-- show_emails.html -->
+<div class="container mt-4">
+  <!-- Form to select number of emails per page -->
+<div class="row">
+  <div class="col-12">
+    <form method="get" action="" class="form-inline justify-content-end">
+      <div class="form-group mb-2">
+        <label for="per_page" class="mr-2">Emails per page:</label>
+        <select id="per_page" name="per_page" class="form-control" onchange="updateEmailsPerPage()">
+          <option value="5" {% if per_page == 5 %}selected{% endif %}>5</option>
+          <option value="10" {% if per_page == 10 %}selected{% endif %}>10</option>
+          <option value="50" {% if per_page == 50 %}selected{% endif %}>50</option>
+        </select>
+      </div>
+    </form>
+  </div>
+</div>
+
+
+<div class="container mt-4">
+  <div class="row">
+    <div class="col-12">
+      {% for email in emails %}
+      <div class="card mb-3">
+        <div class="card-body">
+          <a href="{% url 'email_detail' email.id %}" target="_blank" class="text-decoration-none text-dark">
+            <h3 class="card-title">{{ email.subject }}</h3>
+            <p class="card-text"><strong>From:</strong> {{ email.sender }}</p>
+            <p class="card-text"><strong>Date:</strong> {{ email.date }}</p>
+          </a>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+<div class="container mt-4">
+  <div class="row">
+    <div class="col-12">
+      <!-- Pagination Links -->
+      <nav aria-label="Page navigation">
+        <ul class="pagination">
+          {% if emails.has_previous %}
+            <li class="page-item"><a class="page-link" href="?page={{ emails.previous_page_number }}">New</a></li>
+          {% endif %}
+          {% if emails.has_next %}
+            <li class="page-item"><a class="page-link" href="?page={{ emails.next_page_number }}">Old</a></li>
+          {% endif %}
+        </ul>
+      </nav>
+    </div>
+  </div>
+</div>
+  <script>
+function updateEmailsPerPage() {
+  var form = document.querySelector('form');
+  form.submit();
+}
+</script>
+{% endblock %}

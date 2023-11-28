@@ -1,5 +1,6 @@
 import requests
 from django.conf import settings
+
 from authapp.models import User
 
 # Set your OpenAI API key and model
@@ -69,6 +70,38 @@ def generate_mail_content(user_id: str, name: str, relation: str, style: str, te
     data = {
         "model": openai_model,
         "messages": [system_role_content, user_role_content],
+        "temperature": 0.7
+    }
+
+    response = requests.post(url=url, headers=headers, json=data)
+    response.raise_for_status()
+
+    result = response.json()
+    return "\n" + str(result.get('choices', [{}])[0].get('message', {}).get('content', '')).strip()
+
+
+system_role_summarize \
+    = {"role": "system",
+       "content": "Your primary function is to summarize text provided by users. You analyze the input text, "
+                  "extract key information, themes, and main points, and then present a concise summary that retains "
+                  "the core message of the original text. Your summarization should be accurate, coherent, "
+                  "and focused, ensuring that the essential elements of the text are captured in a more succinct "
+                  "form. Do not Add 'Summary:' or something. transform it into compressed and readable short text "
+                  "make readable and short compressed format. Add Bootstrap with beautiful layout and indentations", }
+
+
+def get_summarize_prompt(text: str):
+    prompt = (f"Please provide a summary with highly structured format without Summary: or some header with "
+              f"bootstrap beautifully with make readable of the following article: [{text}]")
+    return prompt
+
+
+def summarize(text: str) -> str:
+    prompt = get_summarize_prompt(text=text)
+    user_role_summarize = {"role": "user", "content": prompt}
+    data = {
+        "model": openai_model,
+        "messages": [system_role_summarize, user_role_summarize],
         "temperature": 0.7
     }
 

@@ -4,10 +4,10 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_protect
 
+from comm.mailai_smtp import verify_smtp_credentials
 from comm.smtp_crypto import encrypt_smtp_password, decrypt_smtp_password
 from .forms import SignupForm, LoginForm, PasswordConfirmationForm
 from .models import UserProfile
-from .signup_tools import verify_smtp_credentials
 
 
 @csrf_protect

@@ -23,5 +23,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('auth/', include('authapp.urls')),
     path('wmail/', include('wmailapp.urls')),
+    path("rmail/", include('rmailapp.urls')),
     path('', views.index, name='home')
 ]

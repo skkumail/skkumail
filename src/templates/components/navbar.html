@@ -8,8 +8,8 @@
     aria-controls="navbarNav"
     aria-expanded="false"
     aria-label="Toggle navigation"
-    >
-  <span class="navbar-toggler-icon"></span>
+  >
+    <span class="navbar-toggler-icon"></span>
   </button>
   <div class="collapse navbar-collapse" id="navbarNav">
     <ul class="navbar-nav">
@@ -18,13 +18,19 @@
       </li>
       {% if request.user.is_authenticated %}
       <li class="nav-item">
-        <a class="nav-link" href="{% url 'generate_mail' %}">Generate Email</a>
+        <a class="nav-link" href="{% url 'generate_mail' %}">Generate</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="{% url 'delete_account' %}">Delete Account</a>
+        <a class="nav-link" href="{% url 'show_emails' %}">Analyze</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'handle_emails' %}">Fetch</a>
       </li>
       <li class="nav-item">
         <a class="nav-link" href="{% url 'logout' %}?next=/">Logout</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'delete_account' %}">Withdrawal</a>
       </li>
       {% else %}
       <li class="nav-item">
@@ -36,8 +42,8 @@
       {% endif %}
       <li class="nav-item">
         <a class="nav-link" href="https://github.com/skkumail" id="GitHub"
-          >GitHub</a
-          >
+        >GitHub</a
+        >
       </li>
     </ul>
   </div>
