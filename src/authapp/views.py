@@ -27,7 +27,7 @@ def user_signup(request):
             encrypted_password = encrypt_smtp_password(form.cleaned_data['smtp_password'])
             is_valid_credentials = verify_smtp_credentials(user.email, decrypt_smtp_password(encrypted_password))
             if is_valid_credentials:
-                user.save()  # Save the User model
+                user.save()
                 UserProfile.objects.create(user=user, encrypted_smtp_password=encrypted_password)
                 return redirect('login')
             else:
@@ -49,9 +49,7 @@ def user_login(request):
                 login(request, user)
                 return redirect('home')
             else:
-                # Adding an error message when authentication fails
                 messages.error(request, 'Invalid username or password')
-        # If the form is not valid, the form will be passed to the template with errors
     else:
         form = LoginForm()
     return render(request, 'login.html', {'form': form})
@@ -72,14 +70,13 @@ def delete_account(request):
         password_form = PasswordConfirmationForm(request.POST)
         if password_form.is_valid():
             user = request.user
-            # authenticate the user with the provided password
             password = password_form.cleaned_data['password']
             auth_user = authenticate(username=user.username, password=password)
             if auth_user:
                 user.delete()
                 logout(request)
                 messages.success(request, 'Your account has been successfully deleted.')
-                return redirect('login')  # Redirect to a confirmation page
+                return redirect('login')
             else:
                 messages.error(request, 'Password is incorrect.')
         else:

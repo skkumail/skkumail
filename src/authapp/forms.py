@@ -23,7 +23,6 @@ class SignupForm(UserCreationForm):
         user.email = self.cleaned_data['email']
         if commit:
             user.save()
-            # Assuming you have a UserProfile model that stores the encrypted SMTP password
             user_profile = UserProfile(user=user)
             user_profile.encrypted_smtp_password = encrypt_smtp_password(self.cleaned_data['smtp_password'])
             user_profile.save()
@@ -39,5 +38,4 @@ class PasswordConfirmationForm(forms.Form):
     password = forms.CharField(widget=forms.PasswordInput)
 
     def clean_password(self):
-        # You can add custom password validation here if needed
         return self.cleaned_data['password']

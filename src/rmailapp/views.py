@@ -1,4 +1,5 @@
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
@@ -12,8 +13,6 @@ from comm.mailai_google import translate
 from comm.mailai_gpt import summarize
 from comm.mailai_imap import fetch_emails
 from .models import Email
-from authapp.models import UserProfile
-from django.contrib.auth.models import User
 
 
 # Your modification functions

@@ -1,9 +1,7 @@
 import requests
 from django.conf import settings
-
 from authapp.models import User
 
-# Set your OpenAI API key and model
 openai_api_key = settings.OPENAI_API_KEY
 openai_model = settings.OPENAI_MODEL
 headers = {
@@ -17,7 +15,7 @@ system_role_content = {
                "clear, concise, and appropriate for a business setting. Focus solely on the email body, ensuring it "
                "directly addresses the given points. Avoid any superfluous language, summaries, greetings, "
                "or sign-offs. you must make it plane text with new proper new lines and indents format so that it can "
-               "handled with mail server. You must add Dear .. and at the end Best Regards, .. and You must use default "
+               "handled with mail server. You must add Dear .. and at the end Best Regards.. and You must use default "
                "Sender's name from Sender's First Name, and Sender's Last Name."
 }
 
