@@ -8,6 +8,8 @@ from comm.mailai_base64 import process_email_to_include_base64_images
 from comm.smtp_crypto import decrypt_smtp_password
 from rmailapp.models import Email
 from django.utils import timezone
+from django.utils.timezone import is_aware, make_aware, get_default_timezone
+
 
 
 
@@ -28,13 +30,18 @@ def fetch_emails(user_id: int, max_emails: int = 500) -> bool:
         with MailBox('imap.gmail.com').login(email_user_name, imap_password, initial_folder='INBOX') as mailbox:
             for msg in mailbox.fetch(AND(all=True), limit=max_emails, reverse=True):
                 processed_body = process_email_to_include_base64_images(msg)
+                if not is_aware(msg.date):
+                    cur_date = make_aware(msg.date, get_default_timezone())
+                else:
+                    cur_date = msg.date
+
                 Email.objects.update_or_create(
                     uid=msg.uid,
                     defaults={
                         'subject': msg.subject,
                         'sender': msg.from_,
                         'recipient': ",".join(msg.to),
-                        'date': timezone.make_aware(msg.date, timezone.get_default_timezone()),
+                        'date': cur_date,
                         'body': processed_body,
                         'username': user,
                     }
