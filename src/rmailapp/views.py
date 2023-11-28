@@ -12,6 +12,8 @@ from comm.mailai_google import translate
 from comm.mailai_gpt import summarize
 from comm.mailai_imap import fetch_emails
 from .models import Email
+from authapp.models import UserProfile
+from django.contrib.auth.models import User
 
 
 # Your modification functions
@@ -65,10 +67,18 @@ def email_detail(request, email_id):
 @login_required
 @csrf_protect
 def show_emails(request):
-    email_objects = Email.objects.all().order_by('-date')
+
+    user_id = request.user.id
+    user = User.objects.get(id=user_id)
+    #user_profile = UserProfile.objects.get(user=user)
+
+    #email_objects = Email.objects.all().order_by('-date')
+    email_objects = Email.objects.filter(username=user.username).order_by('-date')
 
     per_page = request.GET.get('per_page', 10)
     paginator = Paginator(email_objects, per_page)
+    
+
 
     page = request.GET.get('page')
     try:
