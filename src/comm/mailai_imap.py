@@ -11,25 +11,19 @@ from rmailapp.models import Email
 logger = logging.getLogger(__name__)
 
 
-def fetch_emails(user_id: int) -> bool:
+def fetch_emails(user_id: int, max_emails: int = 500) -> bool:
     try:
         user = User.objects.get(id=user_id)
-        # print(user)
         user_profile = UserProfile.objects.get(user=user)
-        # print(user_profile)
-        imap_password = decrypt_smtp_password(
-            user_profile.encrypted_smtp_password)
-        # print(imap_password)
+        imap_password = decrypt_smtp_password(user_profile.encrypted_smtp_password)
         email_user_name = user.email
-        # print(email_user_name)
     except Exception as e:
         logger.error(f"Failed to retrieve user details: {e}")
         return False
 
     try:
-        with MailBox('imap.gmail.com').login(username=email_user_name, password=imap_password,
-                                             initial_folder='INBOX') as mailbox:
-            for msg in mailbox.fetch(AND(all=True)):
+        with MailBox('imap.gmail.com').login(email_user_name, imap_password, initial_folder='INBOX') as mailbox:
+            for msg in mailbox.fetch(AND(all=True), limit=max_emails, reverse=True):  # Fetch in reverse order, and limit to max_emails
                 processed_body = process_email_to_include_base64_images(msg)
                 Email.objects.update_or_create(
                     uid=msg.uid,
@@ -42,8 +36,7 @@ def fetch_emails(user_id: int) -> bool:
                         'username': user,
                     }
                 )
-            # Logout 불필요 (context manager)
-            return True
+            return True  # Connection is automatically closed when exiting the with block
     except MailboxLoginError as e:
         logger.error(f"Failed to log in to the mailbox: {e}")
         return False
