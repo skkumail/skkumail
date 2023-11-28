@@ -8,42 +8,42 @@
     aria-controls="navbarNav"
     aria-expanded="false"
     aria-label="Toggle navigation"
-  >
-    <span class="navbar-toggler-icon"></span>
+    >
+  <span class="navbar-toggler-icon"></span>
   </button>
   <div class="collapse navbar-collapse" id="navbarNav">
     <ul class="navbar-nav">
       <li class="nav-item">
-        <a class="nav-link" href="/">Home</a>
+        <a class="nav-link" href="/">🏠 Home</a>
       </li>
       {% if request.user.is_authenticated %}
       <li class="nav-item">
-        <a class="nav-link" href="{% url 'generate_mail' %}">Generate</a>
+        <a class="nav-link" href="{% url 'generate_mail' %}">📧 Generate</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="{% url 'show_emails' %}">Analyze</a>
+        <a class="nav-link" href="{% url 'show_emails' %}"> 🔍 Analyze </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="{% url 'handle_emails' %}">Fetch</a>
+        <a class="nav-link" href="{% url 'handle_emails' %}">📥 Fetch</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="{% url 'logout' %}?next=/">Logout</a>
+        <a class="nav-link" href="{% url 'logout' %}?next=/">🔚 Logout</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="{% url 'delete_account' %}">Withdrawal</a>
+        <a class="nav-link" href="{% url 'delete_account' %}">😔 Withdrawal</a>
       </li>
       {% else %}
       <li class="nav-item">
-        <a class="nav-link" href="{% url 'login' %}">Login</a>
+        <a class="nav-link" href="{% url 'login' %}">🔑 Login</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="{% url 'signup' %}">Signup</a>
+        <a class="nav-link" href="{% url 'signup' %}">😊 Signup</a>
       </li>
       {% endif %}
       <li class="nav-item">
-        <a class="nav-link" href="https://github.com/skkumail" id="GitHub"
-        >GitHub</a
-        >
+        <a class="nav-link" href="https://github.com/skkumail/skkumail/blob/main/README.md" id="GitHub"
+          >🗎 README</a
+          >
       </li>
     </ul>
   </div>

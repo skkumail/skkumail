@@ -2,72 +2,58 @@
 {% block main_area %}
 <!-- email_detail.html -->
 <div class="container mt-4">
-  <div class="row">
-    <div class="col-lg-8 mx-auto">
-
-      <!-- Card Box for Content -->
-      <div class="card" id="emailContent">
-        <div class="card-header d-flex justify-content-between align-items-center">
-          <span>Email Details</span>
-
-        </div>
-        <div class="card-body bg-light">
-          <h3 class="card-title">{{ email.subject }}</h3>
-          <p class="card-text"><strong>From:</strong> {{ email.sender }}</p>
-          <p class="card-text"><strong>To:</strong> {{ email.recipient }}</p>
-          <p class="card-text"><strong>Date:</strong> {{ email.date }}</p>
-          <hr>
-          <div class="email-body mb-4">{{ modified_body|default:email.body|safe }}</div>
-
-          <!-- Buttons Grid -->
-          <form method="post" id="loadingForm">
-            {% csrf_token %}
-            <style>
-                .no-wrap {
-                    white-space: nowrap; /* Prevents the text from wrapping */
-                    overflow: hidden; /* Keeps the text inside the button's boundaries */
-                    text-overflow: ellipsis; /* Adds an ellipsis if the text is too long to fit */
-                }
-            </style>
-            <div class="row">
-              <div class="col-md-3 mb-2">
-                <button type="submit" name="modify" value="translation" class="btn btn-primary btn-lg btn-block no-wrap"
-                        data-toggle="tooltip" data-placement="top" title="Translate the email content">Translate
-                </button>
-              </div>
-              <div class="col-md-3 mb-2">
-                <button type="submit" name="modify" value="summary" class="btn btn-info btn-lg btn-block no-wrap"
-                        data-toggle="tooltip" data-placement="top" title="Summarize the email content">Summarize
-                </button>
-              </div>
-              <div class="col-md-3 mb-2">
-                <button type="submit" name="modify" value="keyword" class="btn btn-secondary btn-lg btn-block no-wrap"
-                        data-toggle="tooltip" data-placement="top" title="Extract keywords from the email content">
-                  Keywords
-                </button>
-              </div>
-              <div class="col-md-3 mb-2">
-                <button type="submit" name="modify" value="original" class="btn btn-success btn-lg btn-block no-wrap"
-                        data-toggle="tooltip" data-placement="top" title="Show the original email content">Original
-                </button>
-              </div>
-            </div>
-          </form>
-
-        </div>
-<!--
-        <div id="loadingSpinner" class="text-center" style="display:none;">
-          <div class="spinner-border text-primary" role="status">
-            <span class="sr-only">Loading...</span>
-          </div>
-        </div>
+<div class="row">
+  <div class="col-lg-8 mx-auto">
+    <!-- Card Box for Content -->
+    <div class="card" id="emailContent">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <span>Email Details</span>
       </div>
--->
-
+      <div class="card-body bg-light">
+        <h3 class="card-title">{{ email.subject }}</h3>
+        <p class="card-text"><strong>From:</strong> {{ email.sender }}</p>
+        <p class="card-text"><strong>To:</strong> {{ email.recipient }}</p>
+        <p class="card-text"><strong>Date:</strong> {{ email.date }}</p>
+        <hr>
+        <div class="email-body mb-4">{{ modified_body|default:email.body|safe }}</div>
+        <!-- Buttons Grid -->
+        <form method="post" id="loadingForm">
+          {% csrf_token %}
+          <style>
+            .no-wrap {
+            white-space: nowrap; /* Prevents the text from wrapping */
+            overflow: hidden; /* Keeps the text inside the button's boundaries */
+            text-overflow: ellipsis; /* Adds an ellipsis if the text is too long to fit */
+            }
+          </style>
+          <div class="row">
+            <div class="col-md-3 mb-2">
+              <button type="submit" name="modify" value="translation" class="btn btn-primary btn-lg btn-block no-wrap"
+                data-toggle="tooltip" data-placement="top" title="Translate the email content">🌍 Translate
+              </button>
+            </div>
+            <div class="col-md-3 mb-2">
+              <button type="submit" name="modify" value="summary" class="btn btn-info btn-lg btn-block no-wrap"
+                data-toggle="tooltip" data-placement="top" title="Summarize the email content">📝 Summarize
+              </button>
+            </div>
+            <div class="col-md-3 mb-2">
+              <button type="submit" name="modify" value="keyword" class="btn btn-secondary btn-lg btn-block no-wrap"
+                data-toggle="tooltip" data-placement="top" title="Extract keywords from the email content">
+              🔤 Keywords
+              </button>
+            </div>
+            <div class="col-md-3 mb-2">
+              <button type="submit" name="modify" value="original" class="btn btn-success btn-lg btn-block no-wrap"
+                data-toggle="tooltip" data-placement="top" title="Show the original email content">🔄 Original
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
     </div>
   </div>
 </div>
-
 <!-- Loading Spinner Modal -->
 <div class="modal" id="loadingModal" data-backdrop="static" data-keyboard="false" tabindex="-1">
   <div class="modal-dialog modal-dialog-centered">
@@ -81,19 +67,15 @@
     </div>
   </div>
 </div>
-
-
-
 <script>
-    // Initialize tooltips
-    $(function () {
-        $('[data-toggle="tooltip"]').tooltip();
-    });
-
-    document.getElementById('loadingForm').addEventListener('submit', function() {
-    $('#loadingModal').modal('show');
+  // Initialize tooltips
+  $(function () {
+      $('[data-toggle="tooltip"]').tooltip();
   });
 
+  document.getElementById('loadingForm').addEventListener('submit', function() {
+  $('#loadingModal').modal('show');
+  });
 
 </script>
 {% endblock %}
