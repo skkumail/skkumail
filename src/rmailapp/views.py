@@ -104,7 +104,8 @@ def handle_emails(request):
                 return HttpResponse("Failed to fetch emails. Please check the logs.")
 
         elif 'reset' in request.POST:
-            Email.objects.all().delete()
+            user = request.user
+            Email.objects.filter(username=user.username).delete()
             return HttpResponseRedirect(reverse('show_emails'))
 
     return render(request, 'handle_emails.html')
