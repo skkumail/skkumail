@@ -16,7 +16,7 @@
           <hr/>
           <div class="container">
             {% if request.user.is_authenticated %}
-            <p class="lead">Hello, {{ request.user.username }}!</p>
+            <p class="lead">Hello, {{ request.user.first_name }} {{ request.user.last_name }}!</p>
             <div class="row">
               <div class="col-md-6 mb-2">
                 <a href="{% url 'generate_mail' %}" class="btn btn-primary btn-block">📧 Generate</a>
