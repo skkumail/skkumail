@@ -2,7 +2,25 @@ from django.conf import settings
 from keybert import KeyBERT
 
 
+def truncate_for_bert(text, max_length=512):
+    tokenizer = settings.BERT_TOKENIZER
+
+    inputs = tokenizer.encode_plus(
+        text,
+        add_special_tokens=True,
+        max_length=max_length,
+        truncation=True,
+        return_tensors='pt'
+    )
+
+    # Convert the tokens back to a string
+    truncated_text = tokenizer.convert_tokens_to_string(tokenizer.convert_ids_to_tokens(inputs['input_ids'][0]))
+
+    return truncated_text
+
+
 def extract_n_keywords(text: str, num_keywords: int) -> list:
+    text = truncate_for_bert(text=text)
     kw_model: KeyBERT = settings.KW_MODEL_INSTANCE
     result = kw_model.extract_keywords(docs=text, top_n=num_keywords)
     print(result)
@@ -12,6 +30,7 @@ def extract_n_keywords(text: str, num_keywords: int) -> list:
 
 
 def extract_keywords(text: str) -> str:
+    text = truncate_for_bert(text=text)
     num_keywords: int = 5
     keywords: list = extract_n_keywords(text=text, num_keywords=num_keywords)
 
@@ -49,8 +68,8 @@ def extract_keywords(text: str) -> str:
 
     return html_content
 
-def summarize(text:str):
 
+def summarize(text: str):
     summary = settings.BERT_SUMMARIZER(text, max_length=140, min_length=30, do_sample=False)
     summary_text = summary[0]['summary_text']
 
