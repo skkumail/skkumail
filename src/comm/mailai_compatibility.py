@@ -5,8 +5,7 @@ class MailServerCompativility:
         self.NAVER = 'naver'
 
         self.SMTP_SERVERS = {
-            #self.OUTLOOK: 'smtp-mail.office365.com',
-            self.OUTLOOK: 'smtp-mail.outlook.com',
+            self.OUTLOOK: 'smtp.office365.com',
             self.GMAIL: 'smtp.gmail.com',
             self.NAVER: 'smtp.worksmobile.com'
         }
