@@ -13,6 +13,9 @@ import os
 from pathlib import Path
 
 from keybert import KeyBERT
+from transformers import pipeline
+
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -29,6 +32,7 @@ OPENAI_MODEL = str(os.environ.get("WEB_OPENAI_MODEL", 'default_model')).strip()
 DEBUG = bool(int(str(os.environ.get("WEB_DEBUG", 'False')).strip()))
 
 KW_MODEL_INSTANCE: KeyBERT = KeyBERT()
+BERT_SUMMARIZER = pipeline("summarization")
 
 # print(f"SECRET_KEY set: {'Yes' if SECRET_KEY != 'default_secret_key' else 'No'}")
 # print(f"SECRET_KEY: {SECRET_KEY}")

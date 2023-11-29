@@ -27,25 +27,38 @@
             }
           </style>
           <div class="row">
-            <div class="col-md-3 mb-2">
+
+            <div class="col-md-6 mb-2">
               <button type="submit" name="modify" value="translation" class="btn btn-primary btn-lg btn-block no-wrap"
-                data-toggle="tooltip" data-placement="top" title="Translate the email content">🌍 Translate
+                data-toggle="tooltip" data-placement="top" title="Translate the email content">🌐 Translation (Google)
               </button>
             </div>
-            <div class="col-md-3 mb-2">
+
+            <div class="col-md-6 mb-2">
+              <button type="submit" name="modify" value="llm_translation" class="btn btn-primary btn-lg btn-block no-wrap"
+                      data-toggle="tooltip" data-placement="top" title="LLM Based Translate the email content">🔮 Translation (OpenAI)
+              </button>
+            </div>
+
+            <div class="col-md-6 mb-2">
               <button type="submit" name="modify" value="summary" class="btn btn-info btn-lg btn-block no-wrap"
-                data-toggle="tooltip" data-placement="top" title="Summarize the email content">📝 Summarize
+                data-toggle="tooltip" data-placement="top" title="Summarize the email content">📝 Summary (OpenAI)
               </button>
             </div>
-            <div class="col-md-3 mb-2">
+            <div class="col-md-6 mb-2">
+              <button type="submit" name="modify" value="bert_summary" class="btn btn-info btn-lg btn-block no-wrap"
+                      data-toggle="tooltip" data-placement="top" title="Summarize the email content">📜 Summary (BERT)
+              </button>
+            </div>
+            <div class="col-md-6 mb-2">
               <button type="submit" name="modify" value="keyword" class="btn btn-secondary btn-lg btn-block no-wrap"
                 data-toggle="tooltip" data-placement="top" title="Extract keywords from the email content">
-              🔤 Keywords
+              🔤 Keywords (KeyBERT)
               </button>
             </div>
-            <div class="col-md-3 mb-2">
+            <div class="col-md-6 mb-2">
               <button type="submit" name="modify" value="original" class="btn btn-success btn-lg btn-block no-wrap"
-                data-toggle="tooltip" data-placement="top" title="Show the original email content">🔄 Original
+                data-toggle="tooltip" data-placement="top" title="Show the original email content">↩️ Original Mail
               </button>
             </div>
           </div>

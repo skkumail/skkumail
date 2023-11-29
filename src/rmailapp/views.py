@@ -1,4 +1,5 @@
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
@@ -7,13 +8,12 @@ from django.urls import reverse
 from django.views.decorators.csrf import csrf_protect
 
 from comm.mailai_base64 import modify_base64_encoded_text_content, get_combined_body
-from comm.mailai_bert import extract_keywords
+from comm.mailai_bert import extract_keywords, summarize as bert_summarize
 from comm.mailai_google import translate
+from comm.mailai_gpt import translate as llm_translate
 from comm.mailai_gpt import summarize
 from comm.mailai_imap import fetch_emails
 from .models import Email
-from authapp.models import UserProfile
-from django.contrib.auth.models import User
 
 
 # Your modification functions
@@ -21,14 +21,28 @@ def translate_email(body: str) -> str:
     body2 = body
     body1 = str(modify_base64_encoded_text_content(
         text=body, modification_function=translate))
-    return get_combined_body(body1=body1, body2=body2, description="Translated Mail")
+    return get_combined_body(body1=body1, body2=body2, description="Translated Mail (Google)")
+
+
+def llm_translate_email(body: str) -> str:
+    body2 = body
+    body1 = str(modify_base64_encoded_text_content(
+        text=body, modification_function=llm_translate))
+    return get_combined_body(body1=body1, body2=body2, description="Translated Mail (OpenAI)")
 
 
 def summarize_email(body: str) -> str:
     body2 = body
     body1 = str(modify_base64_encoded_text_content(
         text=body, modification_function=summarize))
-    return get_combined_body(body1=body1, body2=body2, description="Summarized Mail")
+    return get_combined_body(body1=body1, body2=body2, description="Summarized Mail (OpenAI)")
+
+
+def bert_summarize_email(body: str) -> str:
+    body2 = body
+    body1 = str(modify_base64_encoded_text_content(
+        text=body, modification_function=bert_summarize))
+    return get_combined_body(body1=body1, body2=body2, description="Summarized Mail (BERT)")
 
 
 def extract_keyword_email(body):
@@ -52,33 +66,30 @@ def email_detail(request, email_id):
             modified_body = translate_email(body)
         elif modification_type == 'summary':
             modified_body = summarize_email(body)
+        elif modification_type == 'bert_summary':
+            modified_body = bert_summarize_email(body)
         elif modification_type == 'keyword':
             modified_body = extract_keyword_email(body)
+        elif modification_type == 'llm_translation':
+            modified_body = llm_translate_email(body)
         elif modification_type == 'original':
             modified_body = body
 
-        # Redirect to the same page with the modified body
         return render(request, 'email_detail.html', {'email': email, 'modified_body': modified_body})
 
-    # Render with the original body if no POST request
     return render(request, 'email_detail.html', {'email': email})
 
 
 @login_required
 @csrf_protect
 def show_emails(request):
-
     user_id = request.user.id
     user = User.objects.get(id=user_id)
-    #user_profile = UserProfile.objects.get(user=user)
 
-    #email_objects = Email.objects.all().order_by('-date')
     email_objects = Email.objects.filter(username=user.username).order_by('-date')
 
     per_page = request.GET.get('per_page', 10)
     paginator = Paginator(email_objects, per_page)
-    
-
 
     page = request.GET.get('page')
     try:

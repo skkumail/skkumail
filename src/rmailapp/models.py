@@ -11,7 +11,6 @@ class Email(models.Model):
     body = models.TextField()
     objects = models.Manager()
 
-    # Specify a unique related_name for the ForeignKey
     username = models.ForeignKey(User, on_delete=models.CASCADE, to_field='username', related_name='user_emails')
 
     class Meta:

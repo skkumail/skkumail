@@ -30,7 +30,6 @@ def text_to_beautiful_soup(text: str) -> BeautifulSoup:
 
 def modify_base64_encoded_text_content(text: str, modification_function: Callable[[str], str]) -> str:
     soup: BeautifulSoup = text_to_beautiful_soup(text=text)
-    # Extract images and replace them with placeholders
     img_tags = soup.find_all('img')
     placeholders = []
     for i, img in enumerate(img_tags):
