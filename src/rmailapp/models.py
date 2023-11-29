@@ -10,11 +10,11 @@ class Email(models.Model):
     date = models.DateTimeField()
     body = models.TextField()
     objects = models.Manager()
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_id')
 
-    username = models.ForeignKey(User, on_delete=models.CASCADE, to_field='username', related_name='user_emails')
 
     class Meta:
-        unique_together = ('uid', 'username')
+        unique_together = ('uid', 'user')
 
     def __str__(self):
         return f"From: {self.sender}, To: {self.recipient}, Subject: '{self.subject}', Date: {self.date}"
