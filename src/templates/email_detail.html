@@ -2,93 +2,100 @@
 {% block main_area %}
 <!-- email_detail.html -->
 <div class="container mt-4">
-<div class="row">
-  <div class="col-lg-8 mx-auto">
-    <!-- Card Box for Content -->
-    <div class="card" id="emailContent">
-      <div class="card-header d-flex justify-content-between align-items-center">
-        <span>Email Details</span>
-      </div>
-      <div class="card-body bg-light">
-        <h3 class="card-title">{{ email.subject }}</h3>
-        <p class="card-text"><strong>From:</strong> {{ email.sender }}</p>
-        <p class="card-text"><strong>To:</strong> {{ email.recipient }}</p>
-        <p class="card-text"><strong>Date:</strong> {{ email.date }}</p>
-        <hr>
-        <div class="email-body mb-4">{{ modified_body|default:email.body|safe }}</div>
-        <!-- Buttons Grid -->
-        <form method="post" id="loadingForm">
-          {% csrf_token %}
-          <style>
-            .no-wrap {
-            white-space: nowrap; /* Prevents the text from wrapping */
-            overflow: hidden; /* Keeps the text inside the button's boundaries */
-            text-overflow: ellipsis; /* Adds an ellipsis if the text is too long to fit */
-            }
-          </style>
-          <div class="row">
-
-            <div class="col-md-6 mb-2">
-              <button type="submit" name="modify" value="translation" class="btn btn-primary btn-lg btn-block no-wrap"
-                data-toggle="tooltip" data-placement="top" title="Translate the email content">🌐 Translation (Google)
-              </button>
-            </div>
-
-            <div class="col-md-6 mb-2">
-              <button type="submit" name="modify" value="llm_translation" class="btn btn-primary btn-lg btn-block no-wrap"
-                      data-toggle="tooltip" data-placement="top" title="LLM Based Translate the email content">🔮 Translation (OpenAI)
-              </button>
-            </div>
-
-            <div class="col-md-6 mb-2">
-              <button type="submit" name="modify" value="summary" class="btn btn-info btn-lg btn-block no-wrap"
-                data-toggle="tooltip" data-placement="top" title="Summarize the email content">📝 Summary (OpenAI)
-              </button>
-            </div>
-            <div class="col-md-6 mb-2">
-              <button type="submit" name="modify" value="bert_summary" class="btn btn-info btn-lg btn-block no-wrap"
-                      data-toggle="tooltip" data-placement="top" title="Summarize the email content">📜 Summary (BERT)
-              </button>
-            </div>
-            <div class="col-md-6 mb-2">
-              <button type="submit" name="modify" value="keyword" class="btn btn-secondary btn-lg btn-block no-wrap"
-                data-toggle="tooltip" data-placement="top" title="Extract keywords from the email content">
-              🔤 Keywords (KeyBERT)
-              </button>
-            </div>
-            <div class="col-md-6 mb-2">
-              <button type="submit" name="modify" value="original" class="btn btn-success btn-lg btn-block no-wrap"
-                data-toggle="tooltip" data-placement="top" title="Show the original email content">↩️ Original Mail
-              </button>
-            </div>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
-</div>
-<!-- Loading Spinner Modal -->
-<div class="modal" id="loadingModal" data-backdrop="static" data-keyboard="false" tabindex="-1">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-body text-center">
-        <div class="spinner-border text-primary" role="status">
-          <span class="sr-only">Loading...</span>
+  <div class="row">
+    <div class="col-lg-8 mx-auto">
+      <!-- Card Box for Content -->
+      <div class="card" id="emailContent">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <span>Email Details</span>
         </div>
-        <p class="mt-2">Please wait...</p>
+        <div class="card-body bg-light">
+          <h3 class="card-title">{{ email.subject }}</h3>
+          <p class="card-text"><strong>From:</strong> {{ email.sender }}</p>
+          <p class="card-text"><strong>To:</strong> {{ email.recipient }}</p>
+          <p class="card-text"><strong>Date:</strong> {{ email.date }}</p>
+          <hr>
+          <div class="email-body mb-4" style="overflow: auto;">
+            {{ modified_body|default:email.body|safe }}
+          </div>
+          <!-- Buttons Grid -->
+          <form method="post" id="loadingForm">
+            {% csrf_token %}
+            <style>
+                .no-wrap {
+                    white-space: nowrap; /* Prevents the text from wrapping */
+                    overflow: hidden; /* Keeps the text inside the button's boundaries */
+                    text-overflow: ellipsis; /* Adds an ellipsis if the text is too long to fit */
+                }
+            </style>
+            <div class="row">
+
+              <div class="col-md-6 mb-2">
+                <button type="submit" name="modify" value="translation" class="btn btn-primary btn-lg btn-block no-wrap"
+                        data-toggle="tooltip" data-placement="top" title="Translate the email content">🌐 Translation
+                  (Google)
+                </button>
+              </div>
+
+              <div class="col-md-6 mb-2">
+                <button type="submit" name="modify" value="llm_translation"
+                        class="btn btn-primary btn-lg btn-block no-wrap"
+                        data-toggle="tooltip" data-placement="top" title="LLM Based Translate the email content">🔮
+                  Translation (OpenAI)
+                </button>
+              </div>
+
+              <div class="col-md-6 mb-2">
+                <button type="submit" name="modify" value="summary" class="btn btn-info btn-lg btn-block no-wrap"
+                        data-toggle="tooltip" data-placement="top" title="Summarize the email content">📝 Summary
+                  (OpenAI)
+                </button>
+              </div>
+              <div class="col-md-6 mb-2">
+                <button type="submit" name="modify" value="bert_summary" class="btn btn-info btn-lg btn-block no-wrap"
+                        data-toggle="tooltip" data-placement="top" title="Summarize the email content">📜 Summary (BERT)
+                </button>
+              </div>
+              <div class="col-md-6 mb-2">
+                <button type="submit" name="modify" value="keyword" class="btn btn-secondary btn-lg btn-block no-wrap"
+                        data-toggle="tooltip" data-placement="top" title="Extract keywords from the email content">
+                  🔤 Keywords (KeyBERT)
+                </button>
+              </div>
+              <div class="col-md-6 mb-2">
+                <button type="submit" name="modify" value="original" class="btn btn-success btn-lg btn-block no-wrap"
+                        data-toggle="tooltip" data-placement="top" title="Show the original email content">↩️ Original
+                  Mail
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   </div>
-</div>
-<script>
-  // Initialize tooltips
-  $(function () {
-      $('[data-toggle="tooltip"]').tooltip();
-  });
+  <!-- Loading Spinner Modal -->
+  <div class="modal" id="loadingModal" data-backdrop="static" data-keyboard="false" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-body text-center">
+          <div class="spinner-border text-primary" role="status">
+            <span class="sr-only">Loading...</span>
+          </div>
+          <p class="mt-2">Please wait...</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+      // Initialize tooltips
+      $(function () {
+          $('[data-toggle="tooltip"]').tooltip();
+      });
 
-  document.getElementById('loadingForm').addEventListener('submit', function() {
-  $('#loadingModal').modal('show');
-  });
+      document.getElementById('loadingForm').addEventListener('submit', function () {
+          $('#loadingModal').modal('show');
+      });
 
-</script>
-{% endblock %}
+  </script>
+  {% endblock %}
