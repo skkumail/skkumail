@@ -5,40 +5,37 @@ from django.core.mail import get_connection, EmailMessage
 
 from authapp.models import UserProfile
 from comm.smtp_crypto import decrypt_smtp_password
-from comm.mailai_compatibility import email_to_server_type, get_smtp_server, ServerTypeException
+from comm.mailai_compatibility import email_to_server_type, get_smtp_server
 
 
 def send_mail(user_id, recipient, subject, message):
-    try:
+    user = User.objects.get(id=user_id)
+    user_profile = UserProfile.objects.get(user=user)
 
-        user = User.objects.get(id=user_id)
-        user_profile = UserProfile.objects.get(user=user)
+    server_type = email_to_server_type(email=user.email)
+    smtp_server = get_smtp_server(server_type=server_type)
 
-        server_type = email_to_server_type(email=user.email)
-        smtp_server = get_smtp_server(server_type=server_type)
-        print(f"SMTP Server: {smtp_server}")
+    print(f"SMTP Server: {smtp_server}")
 
-        smtp_password = decrypt_smtp_password(user_profile.encrypted_smtp_password)
-        connection = get_connection(
-            backend='django.core.mail.backends.smtp.EmailBackend',
-            username=user.email,
-            # host='smtp.gmail.com',
-            host=smtp_server,
-            port='587',
-            password=smtp_password,
-            use_tls=True  # Use TLS
-        )
+    smtp_password = decrypt_smtp_password(user_profile.encrypted_smtp_password)
+    connection = get_connection(
+        backend='django.core.mail.backends.smtp.EmailBackend',
+        username=user.email,
+        # host='smtp.gmail.com',
+        host=smtp_server,
+        port='587',
+        password=smtp_password,
+        use_tls=True  # Use TLS
+    )
 
-        email = EmailMessage(
-            subject=subject,
-            body=message,
-            from_email=user.email,
-            to=[recipient],
-            connection=connection
-        )
-        email.send()
-    except ServerTypeException as e:
-        print(f"Error: {e}")
+    email = EmailMessage(
+        subject=subject,
+        body=message,
+        from_email=user.email,
+        to=[recipient],
+        connection=connection
+    )
+    email.send()
 
 
 def verify_smtp_credentials(email, smtp_password):
@@ -55,5 +52,3 @@ def verify_smtp_credentials(email, smtp_password):
     except smtplib.SMTPException as e:
         print(f"An SMTP error occurred: {e}")
         return False
-    except ServerTypeException as e:
-        print(f"Error: {e}")

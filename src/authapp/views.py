@@ -23,9 +23,10 @@ def user_signup(request):
         form = SignupForm(request.POST)
         if form.is_valid():
             user = form.save(commit=False)
-            email = form.cleaned_data['email']
+            email = str(form.cleaned_data['email'])
             encrypted_password = encrypt_smtp_password(form.cleaned_data['smtp_password'])
-            is_valid_credentials = verify_smtp_credentials(email, decrypt_smtp_password(encrypted_password))
+            is_valid_credentials = verify_smtp_credentials(email=email,
+                                                           smtp_password=decrypt_smtp_password(encrypted_password))
             if is_valid_credentials:
                 user.email = email
                 user.save()

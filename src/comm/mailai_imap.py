@@ -8,7 +8,7 @@ from authapp.models import UserProfile
 from comm.mailai_base64 import process_email_to_include_base64_images
 from comm.smtp_crypto import decrypt_smtp_password
 from rmailapp.models import Email
-from comm.mailai_compatibility import get_imap_server, email_to_server_type, ServerTypeException
+from comm.mailai_compatibility import get_imap_server, email_to_server_type
 
 logger = logging.getLogger(__name__)
 
@@ -50,8 +50,6 @@ def fetch_emails(user_id: int, max_emails: int = 500) -> bool:
     except MailboxLoginError as e:
         logger.error(f"Failed to log in to the mailbox: {e}")
         return False
-    except ServerTypeException as e:
-        print(f"Error: {e}")
     except Exception as e:
         logger.error(f"An unexpected error occurred: {e}")
         return False
