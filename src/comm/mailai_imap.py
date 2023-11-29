@@ -8,6 +8,7 @@ from authapp.models import UserProfile
 from comm.mailai_base64 import process_email_to_include_base64_images
 from comm.smtp_crypto import decrypt_smtp_password
 from rmailapp.models import Email
+from comm.mailai_compatibility import get_imap_server, email_to_server_type, ServerTypeException
 
 logger = logging.getLogger(__name__)
 
@@ -23,7 +24,10 @@ def fetch_emails(user_id: int, max_emails: int = 500) -> bool:
         return False
 
     try:
-        with MailBox('imap.gmail.com').login(email_user_name, imap_password, initial_folder='INBOX') as mailbox:
+        server_type = email_to_server_type(user.email)
+        imap_server = get_imap_server(server_type)
+        print(f"IMAP Server: {imap_server}")
+        with MailBox(imap_server).login(email_user_name, imap_password, initial_folder='INBOX') as mailbox:
             for msg in mailbox.fetch(AND(all=True), limit=max_emails, reverse=True):
                 processed_body = process_email_to_include_base64_images(msg)
                 if not is_aware(msg.date):
@@ -42,10 +46,12 @@ def fetch_emails(user_id: int, max_emails: int = 500) -> bool:
                         'username': user,
                     }
                 )
-            return True  # Connection is automatically closed when exiting the with block
+            return True
     except MailboxLoginError as e:
         logger.error(f"Failed to log in to the mailbox: {e}")
         return False
+    except ServerTypeException as e:
+        print(f"Error: {e}")
     except Exception as e:
         logger.error(f"An unexpected error occurred: {e}")
         return False

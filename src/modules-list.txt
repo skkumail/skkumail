@@ -7,12 +7,13 @@ tzdata
 requests
 imap_tools
 transformers
-googletrans
+torch
 keybert
 scikit-learn
 django-cryptography
 bs4
 googletrans==4.0.0-rc1
+dnspython
 
 # Code Formatter
 black

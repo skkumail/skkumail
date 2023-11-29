@@ -49,5 +49,25 @@ def extract_keywords(text: str) -> str:
 
     return html_content
 
+def summarize(text:str):
 
+    summary = settings.BERT_SUMMARIZER(text, max_length=140, min_length=30, do_sample=False)
+    summary_text = summary[0]['summary_text']
 
+    html_output = f"""
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        Summary
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">{summary_text}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    """
+    return html_output

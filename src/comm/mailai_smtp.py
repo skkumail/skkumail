@@ -5,35 +5,48 @@ from django.core.mail import get_connection, EmailMessage
 
 from authapp.models import UserProfile
 from comm.smtp_crypto import decrypt_smtp_password
+from comm.mailai_compatibility import email_to_server_type, get_smtp_server, ServerTypeException
 
 
 def send_mail(user_id, recipient, subject, message):
-    user = User.objects.get(id=user_id)
-    user_profile = UserProfile.objects.get(user=user)
+    try:
 
-    smtp_password = decrypt_smtp_password(user_profile.encrypted_smtp_password)
-    connection = get_connection(
-        backend='django.core.mail.backends.smtp.EmailBackend',
-        username=user.email,
-        host='smtp.gmail.com',
-        port='587',
-        password=smtp_password,
-        use_tls=True  # Use TLS
-    )
+        user = User.objects.get(id=user_id)
+        user_profile = UserProfile.objects.get(user=user)
 
-    email = EmailMessage(
-        subject=subject,
-        body=message,
-        from_email=user.email,
-        to=[recipient],
-        connection=connection
-    )
-    email.send()
+        server_type = email_to_server_type(email=user.email)
+        smtp_server = get_smtp_server(server_type=server_type)
+        print(f"SMTP Server: {smtp_server}")
+
+        smtp_password = decrypt_smtp_password(user_profile.encrypted_smtp_password)
+        connection = get_connection(
+            backend='django.core.mail.backends.smtp.EmailBackend',
+            username=user.email,
+            # host='smtp.gmail.com',
+            host=smtp_server,
+            port='587',
+            password=smtp_password,
+            use_tls=True  # Use TLS
+        )
+
+        email = EmailMessage(
+            subject=subject,
+            body=message,
+            from_email=user.email,
+            to=[recipient],
+            connection=connection
+        )
+        email.send()
+    except ServerTypeException as e:
+        print(f"Error: {e}")
 
 
 def verify_smtp_credentials(email, smtp_password):
     try:
-        with smtplib.SMTP('smtp.gmail.com', 587) as server:
+        server_type = email_to_server_type(email=email)
+        smtp_server = get_smtp_server(server_type=server_type)
+        print(f"SMTP Server: {smtp_server}")
+        with smtplib.SMTP(smtp_server, 587) as server:
             server.starttls()
             server.login(email, smtp_password)
             return True
@@ -42,3 +55,5 @@ def verify_smtp_credentials(email, smtp_password):
     except smtplib.SMTPException as e:
         print(f"An SMTP error occurred: {e}")
         return False
+    except ServerTypeException as e:
+        print(f"Error: {e}")
