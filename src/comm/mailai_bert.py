@@ -1,9 +1,10 @@
 from django.conf import settings
 from keybert import KeyBERT
+from transformers import pipeline, Pipeline, AutoTokenizer
 
 
 def truncate_for_bert(text, max_length=512):
-    tokenizer = settings.BERT_TOKENIZER
+    tokenizer: AutoTokenizer = AutoTokenizer.from_pretrained('bert-base-uncased')
 
     inputs = tokenizer.encode_plus(
         text,
@@ -21,7 +22,7 @@ def truncate_for_bert(text, max_length=512):
 
 def extract_n_keywords(text: str, num_keywords: int) -> list:
     text = truncate_for_bert(text=text)
-    kw_model: KeyBERT = settings.KW_MODEL_INSTANCE
+    kw_model: KeyBERT = KeyBERT()
     result = kw_model.extract_keywords(docs=text, top_n=num_keywords)
     print(result)
     for keyword in result:
@@ -70,7 +71,8 @@ def extract_keywords(text: str) -> str:
 
 
 def summarize(text: str):
-    summary = settings.BERT_SUMMARIZER(text, max_length=140, min_length=30, do_sample=False)
+    summarizer: Pipeline = pipeline("summarization")
+    summary = summarizer(text, max_length=140, min_length=30, do_sample=False)
     summary_text = summary[0]['summary_text']
 
     html_output = f"""
