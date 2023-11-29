@@ -9,6 +9,7 @@ from comm.mailai_compatibility import MailServerCompativility
 
 mail_server_compatibility = MailServerCompativility()
 
+
 def send_mail(user_id, recipient, subject, message):
     try:
 
