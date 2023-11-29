@@ -13,9 +13,7 @@ import os
 from pathlib import Path
 
 from keybert import KeyBERT
-from transformers import pipeline
-
-
+from transformers import pipeline, AutoTokenizer, Pipeline
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -23,16 +21,17 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 # SECURITY WARNING: keep the secret key used in production secret!
-DJANGO_CRYPTOGRAPHY_KEY = str(os.environ.get("WEB_CRYPTOGRAPHY_KEY")).strip()
-SECRET_KEY = str(os.environ.get("WEB_SECRET_KEY", 'default_secret_key')).strip()
-PUBLIC_HOST = str(os.environ.get("LETSENCRYPT_HOST", 'localhost')).strip()
-OPENAI_API_KEY = str(os.environ.get("WEB_OPENAI_API_KEY", 'default_openai_key')).strip()
-OPENAI_MODEL = str(os.environ.get("WEB_OPENAI_MODEL", 'default_model')).strip()
+DJANGO_CRYPTOGRAPHY_KEY: str = str(os.environ.get("WEB_CRYPTOGRAPHY_KEY")).strip()
+SECRET_KEY: str = str(os.environ.get("WEB_SECRET_KEY", 'default_secret_key')).strip()
+PUBLIC_HOST: str = str(os.environ.get("LETSENCRYPT_HOST", 'localhost')).strip()
+OPENAI_API_KEY: str = str(os.environ.get("WEB_OPENAI_API_KEY", 'default_openai_key')).strip()
+OPENAI_MODEL: str = str(os.environ.get("WEB_OPENAI_MODEL", 'default_model')).strip()
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = bool(int(str(os.environ.get("WEB_DEBUG", 'False')).strip()))
+DEBUG: bool = bool(int(str(os.environ.get("WEB_DEBUG", 'False')).strip()))
 
 KW_MODEL_INSTANCE: KeyBERT = KeyBERT()
-BERT_SUMMARIZER = pipeline("summarization")
+BERT_SUMMARIZER: Pipeline = pipeline("summarization")
+BERT_TOKENIZER: AutoTokenizer = AutoTokenizer.from_pretrained('bert-base-uncased')
 
 # print(f"SECRET_KEY set: {'Yes' if SECRET_KEY != 'default_secret_key' else 'No'}")
 # print(f"SECRET_KEY: {SECRET_KEY}")
