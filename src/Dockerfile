@@ -14,7 +14,7 @@ RUN pip3 install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-EXPOSE 8000 
-
+EXPOSE 8000
+RUN python3 init_bert.py
 RUN chmod +x entrypoint.sh
 ENTRYPOINT ["./entrypoint.sh"]
