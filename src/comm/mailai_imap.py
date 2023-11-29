@@ -14,7 +14,7 @@ mail_server_compatibility = MailServerCompativility()
 logger = logging.getLogger(__name__)
 
 
-def fetch_emails(user_id: int, max_emails: int = 500) -> bool:
+def fetch_emails(user_id: int, max_emails: int = 500, mark_seen: bool = False) -> bool:
     try:
         user = User.objects.get(id=user_id)
         user_profile = UserProfile.objects.get(user=user)
@@ -29,7 +29,7 @@ def fetch_emails(user_id: int, max_emails: int = 500) -> bool:
         imap_server = mail_server_compatibility.get_imap_server(server_type)
         print(f"IMAP Server: {imap_server}")
         with MailBox(imap_server).login(email_user_name, imap_password, initial_folder='INBOX') as mailbox:
-            for msg in mailbox.fetch(AND(all=True), limit=max_emails, reverse=True):
+            for msg in mailbox.fetch(AND(all=True), limit=max_emails, reverse=True,  mark_seen=mark_seen):
                 processed_body = process_email_to_include_base64_images(msg)
                 if not is_aware(msg.date):
                     cur_date = make_aware(msg.date, get_default_timezone())
@@ -44,7 +44,7 @@ def fetch_emails(user_id: int, max_emails: int = 500) -> bool:
                         'recipient': ",".join(msg.to),
                         'date': cur_date,
                         'body': processed_body,
-                        'username': user,
+                        'user_id': user_id,
                     }
                 )
             return True

@@ -83,10 +83,8 @@ def email_detail(request, email_id):
 @login_required
 @csrf_protect
 def show_emails(request):
-    user_id = request.user.id
-    user = User.objects.get(id=user_id)
 
-    email_objects = Email.objects.filter(username=user.username).order_by('-date')
+    email_objects = Email.objects.filter(user_id=request.user.id).order_by('-date')
 
     per_page = request.GET.get('per_page', 10)
     paginator = Paginator(email_objects, per_page)
@@ -106,17 +104,14 @@ def show_emails(request):
 @csrf_protect
 def handle_emails(request):
     if request.method == "POST":
-        user_id: int = request.user.id
-        print(user_id)
         if 'fetch' in request.POST:
-            if fetch_emails(user_id=user_id):
+            if fetch_emails(user_id=request.user.id, max_emails=100, mark_seen=False):
                 return HttpResponseRedirect(reverse('show_emails'))
             else:
                 return HttpResponse("Failed to fetch emails. Please check the logs.")
 
         elif 'reset' in request.POST:
-            user = request.user
-            Email.objects.filter(username=user.username).delete()
+            Email.objects.filter(user_id=request.user.id).delete()
             return HttpResponseRedirect(reverse('show_emails'))
 
     return render(request, 'handle_emails.html')
