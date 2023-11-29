@@ -12,9 +12,6 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 import os
 from pathlib import Path
 
-from keybert import KeyBERT
-from transformers import pipeline, AutoTokenizer, Pipeline
-import logging
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -30,20 +27,6 @@ OPENAI_MODEL: str = str(os.environ.get("WEB_OPENAI_MODEL", 'default_model')).str
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG: bool = bool(int(str(os.environ.get("WEB_DEBUG", 'False')).strip()))
 
-
-def init_bert():
-    logger = logging.getLogger(__name__)
-    keybert: KeyBERT = KeyBERT()
-    summarizer: Pipeline = pipeline("summarization")
-    tokenizer: AutoTokenizer = AutoTokenizer.from_pretrained('bert-base-uncased')
-
-    # Log the information
-    logger.info("KeyBERT initialized: %s", keybert.__str__())
-    logger.info("Summarizer pipeline initialized: %s", summarizer.__str__())
-    logger.info("BERT tokenizer initialized: %s", tokenizer.__str__())
-
-
-init_bert()  # for caching
 
 # print(f"SECRET_KEY set: {'Yes' if SECRET_KEY != 'default_secret_key' else 'No'}")
 # print(f"SECRET_KEY: {SECRET_KEY}")
