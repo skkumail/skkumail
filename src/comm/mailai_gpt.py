@@ -1,5 +1,6 @@
 import requests
 from django.conf import settings
+
 from authapp.models import User
 
 openai_api_key = settings.OPENAI_API_KEY

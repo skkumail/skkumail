@@ -1,8 +1,9 @@
 #!/bin/python3
 # entrypoint.sh에서 사용
+import logging
+
 from keybert import KeyBERT
 from transformers import pipeline, AutoTokenizer, Pipeline
-import logging
 
 
 def init_bert():
