@@ -5,6 +5,7 @@ if [ -z "$WORKERS" ]; then
   WORKERS=$(( 2 * CORES + 1 ))
 fi
 
+python3 init_bert.py
 python3 manage.py makemigrations
 python3 manage.py migrate
 # b, w, k, t
