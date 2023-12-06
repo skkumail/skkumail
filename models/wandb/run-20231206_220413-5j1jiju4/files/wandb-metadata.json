@@ -1,0 +1,128 @@
+{
+    "os": "Linux-6.2.0-37-generic-x86_64-with-glibc2.35",
+    "python": "3.10.12",
+    "heartbeatAt": "2023-12-06T13:04:15.202525",
+    "startedAt": "2023-12-06T13:04:13.296003",
+    "docker": null,
+    "cuda": null,
+    "args": [],
+    "state": "running",
+    "program": "/home/jkmxm/work/2023/skkumail/models/train.py",
+    "codePathLocal": "train.py",
+    "codePath": "models/train.py",
+    "git": {
+        "remote": "git@github.com:skkumail/skkumail.git",
+        "commit": "0dd4e9844d6f5f21944e5f64cdfb6e39f7fe305b"
+    },
+    "email": "yskim0830@outlook.com",
+    "root": "/home/jkmxm/work/2023/skkumail",
+    "host": "jkmxm-pc",
+    "username": "jkmxm",
+    "executable": "/home/jkmxm/work/2023/skkumail/models/venv/bin/python3",
+    "cpu_count": 8,
+    "cpu_count_logical": 16,
+    "cpu_freq": {
+        "current": 3021.6051875,
+        "min": 800.0,
+        "max": 4600.0
+    },
+    "cpu_freq_per_core": [
+        {
+            "current": 2855.504,
+            "min": 800.0,
+            "max": 4600.0
+        },
+        {
+            "current": 1265.785,
+            "min": 800.0,
+            "max": 4600.0
+        },
+        {
+            "current": 1126.939,
+            "min": 800.0,
+            "max": 4600.0
+        },
+        {
+            "current": 3675.589,
+            "min": 800.0,
+            "max": 4600.0
+        },
+        {
+            "current": 2300.0,
+            "min": 800.0,
+            "max": 4600.0
+        },
+        {
+            "current": 4074.787,
+            "min": 800.0,
+            "max": 4600.0
+        },
+        {
+            "current": 4095.331,
+            "min": 800.0,
+            "max": 4600.0
+        },
+        {
+            "current": 4019.494,
+            "min": 800.0,
+            "max": 4600.0
+        },
+        {
+            "current": 3670.807,
+            "min": 800.0,
+            "max": 4600.0
+        },
+        {
+            "current": 4187.278,
+            "min": 800.0,
+            "max": 4600.0
+        },
+        {
+            "current": 3425.441,
+            "min": 800.0,
+            "max": 4600.0
+        },
+        {
+            "current": 2300.0,
+            "min": 800.0,
+            "max": 4600.0
+        },
+        {
+            "current": 4117.988,
+            "min": 800.0,
+            "max": 4600.0
+        },
+        {
+            "current": 3574.757,
+            "min": 800.0,
+            "max": 4600.0
+        },
+        {
+            "current": 2738.793,
+            "min": 800.0,
+            "max": 4600.0
+        },
+        {
+            "current": 2508.638,
+            "min": 800.0,
+            "max": 4600.0
+        }
+    ],
+    "disk": {
+        "/": {
+            "total": 456.8854446411133,
+            "used": 380.05652236938477
+        }
+    },
+    "gpu": "NVIDIA GeForce RTX 3050 Laptop GPU",
+    "gpu_count": 1,
+    "gpu_devices": [
+        {
+            "name": "NVIDIA GeForce RTX 3050 Laptop GPU",
+            "memory_total": 4294967296
+        }
+    ],
+    "memory": {
+        "total": 15.33892822265625
+    }
+}

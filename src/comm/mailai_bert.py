@@ -1,5 +1,6 @@
 from keybert import KeyBERT
 from transformers import pipeline, Pipeline, BertTokenizer
+from django.conf import settings
 
 
 def truncate_for_bert(text, max_length=1024):
@@ -62,7 +63,7 @@ def extract_keywords(text: str) -> str:
 
 
 def summarize(text: str):
-    summarizer: Pipeline = pipeline("summarization")
+    summarizer: Pipeline = pipeline("summarization", model=settings.BERT_MODEL)
     summary = summarizer(text, max_length=140, min_length=30, do_sample=False)
     summary_text = summary[0]['summary_text']
 

@@ -1,0 +1,9 @@
+transformers 
+transformers[torch]
+datasets 
+wandb
+neovim
+torch
+torchviz
+pandas
+numpy
