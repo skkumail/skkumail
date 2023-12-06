@@ -1,21 +1,12 @@
-from django.conf import settings
 from keybert import KeyBERT
-from transformers import pipeline, Pipeline, AutoTokenizer
+from transformers import pipeline, Pipeline, BertTokenizer
 
 
-def truncate_for_bert(text, max_length=512):
-    tokenizer: AutoTokenizer = AutoTokenizer.from_pretrained('bert-base-uncased')
-
-    inputs = tokenizer.encode_plus(
-        text,
-        add_special_tokens=True,
-        max_length=max_length,
-        truncation=True,
-        return_tensors='pt'
-    )
-
-    # Convert the tokens back to a string
-    truncated_text = tokenizer.convert_tokens_to_string(tokenizer.convert_ids_to_tokens(inputs['input_ids'][0]))
+def truncate_for_bert(text, max_length=1024):
+    tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
+    tokens = tokenizer.encode(text, add_special_tokens=True)
+    truncated_tokens = tokens[:max_length]
+    truncated_text = tokenizer.decode(truncated_tokens)
 
     return truncated_text
 

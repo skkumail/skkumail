@@ -4,8 +4,8 @@ from django.contrib.auth.models import User
 from django.core.mail import get_connection, EmailMessage
 
 from authapp.models import UserProfile
-from comm.smtp_crypto import decrypt_smtp_password
 from comm.mailai_compatibility import MailServerCompativility
+from comm.smtp_crypto import decrypt_smtp_password
 
 mail_server_compatibility = MailServerCompativility()
 

@@ -6,9 +6,10 @@ from imap_tools import MailBox, AND, MailboxLoginError
 
 from authapp.models import UserProfile
 from comm.mailai_base64 import process_email_to_include_base64_images
+from comm.mailai_compatibility import MailServerCompativility
 from comm.smtp_crypto import decrypt_smtp_password
 from rmailapp.models import Email
-from comm.mailai_compatibility import MailServerCompativility
+
 mail_server_compatibility = MailServerCompativility()
 
 logger = logging.getLogger(__name__)

@@ -1,5 +1,4 @@
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
@@ -10,8 +9,8 @@ from django.views.decorators.csrf import csrf_protect
 from comm.mailai_base64 import modify_base64_encoded_text_content, get_combined_body
 from comm.mailai_bert import extract_keywords, summarize as bert_summarize
 from comm.mailai_google import translate
-from comm.mailai_gpt import translate as llm_translate
 from comm.mailai_gpt import summarize
+from comm.mailai_gpt import translate as llm_translate
 from comm.mailai_imap import fetch_emails
 from .models import Email
 

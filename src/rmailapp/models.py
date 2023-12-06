@@ -12,7 +12,6 @@ class Email(models.Model):
     objects = models.Manager()
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_id')
 
-
     class Meta:
         unique_together = ('uid', 'user')
 

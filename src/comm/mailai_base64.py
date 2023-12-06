@@ -2,6 +2,7 @@ import base64
 from typing import Callable
 
 from bs4 import BeautifulSoup
+from langdetect import detect
 
 
 def process_email_to_include_base64_images(email_message):
@@ -33,15 +34,23 @@ def modify_base64_encoded_text_content(text: str, modification_function: Callabl
     img_tags = soup.find_all('img')
     placeholders = []
     for i, img in enumerate(img_tags):
-        alt_text = img.get('alt', f"Image{i}")
         placeholder = soup.new_tag('p')
-        placeholder.string = f"[Image: {alt_text}]"
+        placeholder.string = f""
         img.replace_with(placeholder)
         placeholders.append((placeholder, img))
 
     plane_text = soup.get_text(separator='\n', strip=True)
+    detected_language = detect(plane_text)
+    if detected_language != 'en':
+        return f"""
+        <div class="alert alert-warning" role="alert" style="font-size: 1.5rem;">
+            Text is not in English. Detected language: {detected_language}
+        </div>
+        """
+
+    if len(plane_text) > 2048:
+        plane_text = plane_text[:2048]
     modified_body: str = modification_function(plane_text)
-    print(modified_body)
     modified_soup: BeautifulSoup = text_to_beautiful_soup(text=modified_body)
     return str(modified_soup)
 
