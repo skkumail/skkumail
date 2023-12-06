@@ -28,7 +28,8 @@ OPENAI_API_KEY: str = str(os.environ.get(
     "WEB_OPENAI_API_KEY", 'default_openai_key')).strip()
 OPENAI_MODEL: str = str(os.environ.get(
     "WEB_OPENAI_MODEL", 'default_model')).strip()
-BERT_MODEL: str = str(os.environ.get("WEB_BERT_MODEL"))
+#BERT_MODEL: str = str(os.environ.get("WEB_BERT_MODEL"))
+BERT_MODEL: str = "facebook/bart-large-cnn"
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG: bool = bool(int(str(os.environ.get("WEB_DEBUG", 'False')).strip()))

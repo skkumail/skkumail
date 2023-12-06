@@ -10,7 +10,7 @@ from transformers import pipeline, AutoTokenizer, Pipeline
 def init_bert():
     logger = logging.getLogger(__name__)
     keybert: KeyBERT = KeyBERT()
-    summarizer: Pipeline = pipeline("summarization", models=os.environ.get("WEB_BERT_MODEL"))
+    summarizer: Pipeline = pipeline("summarization", model="facebook/bart-large-cnn")
     tokenizer: AutoTokenizer = AutoTokenizer.from_pretrained('bert-base-uncased')
 
     # Log the information
