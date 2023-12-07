@@ -1,13 +1,13 @@
 version: 2
 updates:
   - package-ecosystem: "pip"
-    directory: "/src/"
+    directory: "./src"
     schedule:
-      interval: "monthly"
+      interval: "daily"
     open-pull-requests-limit: 10
 
   - package-ecosystem: "docker"
-    directory: "/src/"
+    directory: "./src"
     schedule:
-      interval: "monthly"
+      interval: "daily"
     open-pull-requests-limit: 10
