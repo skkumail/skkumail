@@ -7,3 +7,7 @@ torch
 torchviz
 pandas
 numpy
+absl-py
+nltk
+rouge_score
+evaluate

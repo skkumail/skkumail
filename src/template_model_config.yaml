@@ -1,0 +1,13 @@
+# src/model_config.yaml
+
+bert:
+  summary-model: "facebook/bart-large-cnn"
+  keyword-model: "all-mpnet-base-v2"
+  tokenizer: "bert-base-uncased"
+
+openai:
+  api-key: <apikey>
+  gpt-model: <gpt-model>
+
+
+

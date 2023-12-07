@@ -2,7 +2,7 @@ import base64
 from typing import Callable
 
 from bs4 import BeautifulSoup
-from langdetect import detect
+from langdetect import detect, LangDetectException
 
 
 def process_email_to_include_base64_images(email_message):
@@ -40,13 +40,29 @@ def modify_base64_encoded_text_content(text: str, modification_function: Callabl
         placeholders.append((placeholder, img))
 
     plane_text = soup.get_text(separator='\n', strip=True)
-    detected_language = detect(plane_text)
-    if detected_language != 'en':
-        return f"""
-        <div class="alert alert-warning" role="alert" style="font-size: 1.5rem;">
-            Text is not in English. Detected language: {detected_language}
-        </div>
-        """
+    try:
+        detected_language = detect(plane_text)
+        if detected_language != 'en':
+            return f"""
+            <div class="alert alert-info" role="alert" style="font-size: 1.5rem;">
+                Text is not in English.<br><br>
+                Detected language: {detected_language}
+            </div>
+            """
+    except LangDetectException as e:
+        # Handling the case where no features are detected (e.g., empty text)
+        if str(e) == "No features in text.":
+            return f"""
+            <div class="alert alert-info" role="alert" style="font-size: 1.5rem;">
+                Empty Email.
+            </div>
+            """
+        else:
+            return f"""
+            <div class="alert alert-info" role="alert" style="font-size: 1.5rem;">
+                Language detection error: {str(e)}
+            </div>
+            """
 
     if len(plane_text) > 2048:
         plane_text = plane_text[:2048]

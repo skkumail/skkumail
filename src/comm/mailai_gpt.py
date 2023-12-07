@@ -3,8 +3,8 @@ from django.conf import settings
 
 from authapp.models import User
 
-openai_api_key = settings.OPENAI_API_KEY
-openai_model = settings.OPENAI_MODEL
+openai_api_key = settings.GPT_OPENAI_APIKEY
+openai_model = settings.GPT_MODEL
 headers = {
     "Content-Type": "application/json",
     "Authorization": f"Bearer {openai_api_key}"
