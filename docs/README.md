@@ -1,4 +1,4 @@
-# MailAI Project
+# SKKU Mail Project
 
 ## Table of Contents
 
@@ -37,7 +37,7 @@
 ### 8. [Contributing](#contributing)
 ## Project Overview
 
-MailAI is an AI-based email management system, developed as a capstone design project. It leverages Django, MariaDB, BERT, KeyBERT, Let's Encrypt, Docker, and other technologies, and is hosted on AWS EC2 with Route53. The system offers features like automatic mail generation, mail analysis, translation, and more, utilizing AI models including GPT and BERT.
+SKKU Mail is an AI-based email management system, developed as a capstone design project. It leverages Django, MariaDB, BERT, KeyBERT, Let's Encrypt, Docker, and other technologies, and is hosted on AWS EC2 with Route53. The system offers features like automatic mail generation, mail analysis, translation, and more, utilizing AI models including GPT and BERT.
 
 ## How to Use
 
@@ -98,7 +98,7 @@ MailAI is an AI-based email management system, developed as a capstone design pr
 ### Fetch Mailbox
 
 - Fetch emails by clicking the Fetch button in the navbar. This action doesn't affect the server's mailbox or read/unread status.
-- Resetting affects only MailAI's database.
+- Resetting affects only SKKU Mail's database.
   ![Fetch Mailbox](img/screenshots/rmailapp_fetch.png )
 
 ### Analyze Email
@@ -154,8 +154,41 @@ MailAI is an AI-based email management system, developed as a capstone design pr
 ![ER Diagram](img/architecture/erd.png)
 #### Session Management
 ![Session Management](img/architecture/session_management.png)
+#### Test DB Setup
+- MariaDB Container Access
+```bash
+docker exec -it {container_id} mysql -u root -p
+```
 
+- Execute SQL
+```sql
+-- Grant privileges only for the test database
+GRANT ALL PRIVILEGES ON `test\_%`.* TO 'mailai_user'@'%';
+FLUSH PRIVILEGES;
+```
+
+- Check Privileges
+```sql
+SHOW GRANTS FOR 'mailai_user'@'%';
+```
 
 ## Project Structure
 
-
+```bash
+skkumail/                      
+├── build_docs.sh              – Auto-build & push Doxygen docs
+├── commit.sh                  – Interactive git-commit helper
+├── docker-compose.yaml        – MariaDB + Django + nginx-proxy stack
+├── Doxyfile / docs/           – Doxygen config & generated site
+├── Makefile                   – Convenience targets (build/up/down/logs/docs)
+├── LICENSE                    – Apache-2.0
+└── src/                       – Django monorepo
+    ├── manage.py              – Django CLI entry
+    ├── mailai/                – Core settings, URLs, ASGI/WSGI
+    ├── authapp/               – Sign-up / login, SMTP-pwd encryption
+    ├── wmailapp/              – “Write” : GPT-powered email composer & sender
+    ├── rmailapp/              – “Read”  : IMAP fetcher, keyword/summary tools
+    ├── comm/                  – Shared utils (GPT/BERT, IMAP/SMTP, crypto)
+    ├── Dockerfile             – Runtime image (Ubuntu + Gunicorn + Uvicorn)
+    └── entrypoint.sh          – Migrate DB then launch Gunicorn
+```
