@@ -24,6 +24,7 @@ DJANGO_CRYPTOGRAPHY_KEY: str = str(
 SECRET_KEY: str = str(os.environ.get(
     "WEB_SECRET_KEY", 'default_secret_key')).strip()
 PUBLIC_HOST: str = str(os.environ.get("LETSENCRYPT_HOST", 'localhost')).strip()
+GPT_OPENAI_APIKEY: str = str(os.environ.get("WEB_OPENAI_API_KEY", '')).strip()
 DEBUG: bool = bool(int(str(os.environ.get("WEB_DEBUG", 'False')).strip()))
 
 # Load BERT models pre-cached in the .cache directory within the Docker image
@@ -35,8 +36,6 @@ with open(os.path.join(BASE_DIR, 'model_config.yaml'), 'r') as file:
 BERT_SUMMARY_MODEL:str = bert_config['summary-model']
 BERT_KEYWORD_MODEL:str = bert_config['keyword-model']
 BERT_TOKENIZER_MODEL:str = bert_config['tokenizer']
-
-GPT_OPENAI_APIKEY: str = openai_config['api-key']
 GPT_MODEL: str = openai_config['gpt-model']
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', PUBLIC_HOST]
