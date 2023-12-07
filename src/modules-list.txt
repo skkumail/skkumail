@@ -15,6 +15,7 @@ bs4
 googletrans==4.0.0-rc1
 dnspython
 langdetect
+PyYAML
 
 # Code Formatter
 black

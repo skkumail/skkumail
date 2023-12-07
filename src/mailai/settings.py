@@ -10,8 +10,8 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 import os
+import yaml
 from pathlib import Path
-
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -24,24 +24,20 @@ DJANGO_CRYPTOGRAPHY_KEY: str = str(
 SECRET_KEY: str = str(os.environ.get(
     "WEB_SECRET_KEY", 'default_secret_key')).strip()
 PUBLIC_HOST: str = str(os.environ.get("LETSENCRYPT_HOST", 'localhost')).strip()
-OPENAI_API_KEY: str = str(os.environ.get(
-    "WEB_OPENAI_API_KEY", 'default_openai_key')).strip()
-OPENAI_MODEL: str = str(os.environ.get(
-    "WEB_OPENAI_MODEL", 'default_model')).strip()
-#BERT_MODEL: str = str(os.environ.get("WEB_BERT_MODEL"))
-BERT_MODEL: str = "facebook/bart-large-cnn"
-
-# SECURITY WARNING: don't run with debug turned on in production!
 DEBUG: bool = bool(int(str(os.environ.get("WEB_DEBUG", 'False')).strip()))
 
+# Load BERT models pre-cached in the .cache directory within the Docker image
+with open(os.path.join(BASE_DIR, 'model_config.yaml'), 'r') as file:
+    config = yaml.safe_load(file)
+    bert_config = config['bert']
+    openai_config = config['openai']
 
-# print(f"SECRET_KEY set: {'Yes' if SECRET_KEY != 'default_secret_key' else 'No'}")
-# print(f"SECRET_KEY: {SECRET_KEY}")
-# print(f"DJANGO_CRYPTOGRAPY_KEY: {DJANGO_CRYPTOGRAPHY_KEY}")
-# print(f"PUBLIC_HOST: {PUBLIC_HOST}")
-# print(f"OPENAI_API_KEY set: {'Yes' if OPENAI_API_KEY != 'default_openai_key' else 'No'}")
-# print(f"OPENAI_MODEL: {OPENAI_MODEL}")
-# print(f"DEBUG: {DEBUG}")
+BERT_SUMMARY_MODEL:str = bert_config['summary-model']
+BERT_KEYWORD_MODEL:str = bert_config['keyword-model']
+BERT_TOKENIZER_MODEL:str = bert_config['tokenizer']
+
+GPT_OPENAI_APIKEY: str = openai_config['api-key']
+GPT_MODEL: str = openai_config['gpt-model']
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', PUBLIC_HOST]
 

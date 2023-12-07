@@ -4,7 +4,7 @@ from django.conf import settings
 
 
 def truncate_for_bert(text, max_length=1024):
-    tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
+    tokenizer: BertTokenizer = BertTokenizer.from_pretrained(pretrained_model_name_or_path=settings.BERT_TOKENIZER_MODEL)
     tokens = tokenizer.encode(text, add_special_tokens=True)
     truncated_tokens = tokens[:max_length]
     truncated_text = tokenizer.decode(truncated_tokens)
@@ -14,7 +14,7 @@ def truncate_for_bert(text, max_length=1024):
 
 def extract_n_keywords(text: str, num_keywords: int) -> list:
     text = truncate_for_bert(text=text)
-    kw_model: KeyBERT = KeyBERT()
+    kw_model: KeyBERT = KeyBERT(model=settings.BERT_KEYWORD_MODEL)
     result = kw_model.extract_keywords(docs=text, top_n=num_keywords)
     print(result)
     for keyword in result:
@@ -63,7 +63,7 @@ def extract_keywords(text: str) -> str:
 
 
 def summarize(text: str):
-    summarizer: Pipeline = pipeline("summarization", model=settings.BERT_MODEL)
+    summarizer: Pipeline = pipeline("summarization", model=settings.BERT_SUMMARY_MODEL)
     summary = summarizer(text, max_length=140, min_length=30, do_sample=False)
     summary_text = summary[0]['summary_text']
 
