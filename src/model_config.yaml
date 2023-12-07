@@ -1,0 +1,10 @@
+bert:
+  summary-model: "facebook/bart-large-cnn"
+  keyword-model: "all-mpnet-base-v2"
+  tokenizer: "bert-base-uncased"
+
+openai:
+  gpt-model: "gpt-3.5-turbo"
+
+
+
