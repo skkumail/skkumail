@@ -33,9 +33,9 @@ with open(os.path.join(BASE_DIR, 'model_config.yaml'), 'r') as file:
     bert_config = config['bert']
     openai_config = config['openai']
 
-BERT_SUMMARY_MODEL:str = bert_config['summary-model']
-BERT_KEYWORD_MODEL:str = bert_config['keyword-model']
-BERT_TOKENIZER_MODEL:str = bert_config['tokenizer']
+BERT_SUMMARY_MODEL: str = bert_config['summary-model']
+BERT_KEYWORD_MODEL: str = bert_config['keyword-model']
+BERT_TOKENIZER_MODEL: str = bert_config['tokenizer']
 GPT_MODEL: str = openai_config['gpt-model']
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', PUBLIC_HOST]
