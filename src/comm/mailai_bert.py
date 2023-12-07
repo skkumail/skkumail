@@ -63,6 +63,7 @@ def extract_keywords(text: str) -> str:
 
 
 def summarize(text: str):
+    text = truncate_for_bert(text=text)
     summarizer: Pipeline = pipeline("summarization", model=settings.BERT_SUMMARY_MODEL)
     summary = summarizer(text, max_length=140, min_length=30, do_sample=False)
     summary_text = summary[0]['summary_text']
